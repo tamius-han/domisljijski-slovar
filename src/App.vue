@@ -72,7 +72,7 @@
     <div class="footer">
       <div class="page">
         <div class="content">
-          <a href="https://tamius.net">tamius.net</a> :: domišljijski slovarček. Vidi me na github (alan, sčasoma dodaj povezavo?)<br/>
+          <a href="https://tamius.net">tamius.net</a> :: domišljijski slovarček. Vidi me na <a href="https://github.com/tamius-han/domisljijski-slovar" target="_blank">github</a>.<br/>
           Posebne zahvale: <a href="https://reddit.com/user/Sneikss">/u/Sneikss</a>
         </div>
       </div>
