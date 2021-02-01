@@ -1,5 +1,6 @@
 {
   "name": "fantazijski-slovar",
+  "title": "Domišljijski slovarček",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,7 +10,8 @@
   },
   "dependencies": {
     "core-js": "^3.6.4",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "vue-debounce": "^2.5.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.3.0",
