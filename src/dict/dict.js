@@ -414,7 +414,7 @@ var wordlist = Object.freeze([
   {
     en: 'direwolf',
     slo: [
-      { word: 'pravolk', wordExtras: [{type: 'ž.', word: 'pravolkulja'}] usage: ['Bitja', 'Zveri'], via: 'Sneikss'},
+      { word: 'pravolk', wordExtras: [{type: 'ž.', word: 'pravolkulja'}], usage: ['Bitja', 'Zveri'], via: 'Sneikss'},
       { word: 'zlolk', wordExtras: [{type: 'ž.', word: 'zlolkulja'}], rfc: true, usage: ['Bitja', 'Zveri'], note: 'Etimološko: <i>zlo</i> + <i>volk</i>, beri: <i>\'zlovk\'</i>. Sprejemljiva je tudi daljša oblika <i>\'zlovolk</i>\', ampak ne pretiravati.'},
       { word: 'krvovolk',usage: ['Bitja', 'Zveri'], via: 'Igra prestolov?', note: 'Moj google-fu ne najde drugih instanc. Za resničnosveško različico tega bitja na slovenski wikipediji in prosto-dostopnih slovarjih slovenskega jezika ni. Je pa to zelo skremžljiv prevod, tako da prosim ne.'},
     ]
