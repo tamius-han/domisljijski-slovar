@@ -26,6 +26,11 @@
       "scripthost"
     ]
   },
+  "types": [
+    "webpack-env",
+    "gapi",
+    "gapi.auth2"
+  ],
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",

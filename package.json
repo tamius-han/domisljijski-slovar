@@ -16,6 +16,8 @@
     "vue3-google-oauth2": "^1.0.4"
   },
   "devDependencies": {
+    "@types/gapi": "0.0.39",
+    "@types/gapi.auth2": "0.0.54",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-typescript": "~4.5.0",
