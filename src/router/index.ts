@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
+import Slovarcek from '../views/Slovarcek.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Domišljijski slovarček',
-    component: Home
+    component: Slovarcek
   },
   {
     path: '/about',

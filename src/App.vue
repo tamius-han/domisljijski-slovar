@@ -1,7 +1,8 @@
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">Slovarček</router-link> |
+    <router-link to="/about">O strani</router-link> |
+    <router-link to="/about">Temni kotiček</router-link>
   </div>
   <router-view/>
 </template>
@@ -16,14 +17,16 @@
 }
 
 #nav {
-  padding: 30px;
+  background-color: #382a1e;
+
+  padding: 1rem;
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: #ffbc8f;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: #fddec9;
     }
   }
 }

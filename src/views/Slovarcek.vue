@@ -44,11 +44,13 @@
                     <span class="word-word">{{word.word}}</span>
                     <span v-if="word.wordExtras" class="word-extra">
                       &nbsp; &nbsp;(
-                      <template v-for="(extras, index) of word.wordExtras"
+                      <template
+                        v-for="(extras, index) of word.wordExtras"
+                        :key="index"
                       >
-                        <span v-if="index > 0" class="extras-type" :key="index">, </span>
-                        <span class="extras-type" :key="index">{{extras.type}}</span>
-                        <span class="extras-word" :key="index"> {{extras.word}}</span>
+                        <span v-if="index > 0" class="extras-type">, </span>
+                        <span class="extras-type">{{extras.type}}</span>
+                        <span class="extras-word"> {{extras.word}}</span>
                       </template>
                       )
                     </span>
@@ -80,10 +82,11 @@
   </div>
 </template>
 
-<script>
-import Dictionary from './dict/dict';
+<script lang="ts">
+import { defineComponent } from 'vue';
+import Dictionary from '../dict/dict';
 
-export default {
+export default defineComponent({
   name: 'App',
   data() {
     return {
@@ -107,7 +110,7 @@ export default {
       this.hits = [];
     }
   }
-}
+})
 </script>
 
 <style>
