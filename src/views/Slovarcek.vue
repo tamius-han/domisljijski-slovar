@@ -90,21 +90,21 @@ export default defineComponent({
   name: 'App',
   data() {
     return {
-      hits: [],
+      hits: new Array<any>(),
       wordlist: Dictionary.wordlist
     }
   },
   methods: {
     showAll() {
-      this.hits = this.wordlist;
+      (this.hits as any) = this.wordlist;
     },
-    search(search) {
+    search(search: string) {
       search = search.toLowerCase().trim();
       if (search == '') {
         this.hits = [];
         return;
       }
-      this.hits = this.wordlist.filter(x => x.en.includes(search));
+      this.hits = this.wordlist.filter((x: any) => x.en.includes(search));
     },
     clear() {
       this.hits = [];

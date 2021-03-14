@@ -2,7 +2,7 @@
   <div id="nav">
     <router-link to="/">Slovarček</router-link> |
     <router-link to="/about">O strani</router-link> |
-    <router-link to="/about">Temni kotiček</router-link>
+    <router-link to="/durin">Temni kotiček</router-link>
   </div>
   <router-view/>
 </template>
