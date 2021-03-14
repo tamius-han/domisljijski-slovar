@@ -1,14 +1,4 @@
-var types = Object.freeze({
-  Dnd: 1,
-  DndRace: 2,
-  DndClass: 3,
-  DndItem: 4,
-  DndMonster: 5,
-  DndSpell: 6,
-  DndCurse: 7,
-  DndPlace: 8,
-  DndMagic: 9,
-});
+import WordType from '@/enum/word-type.enum';
 
 var wordlist = Object.freeze([
   /**
@@ -88,28 +78,28 @@ var wordlist = Object.freeze([
   {
     en: 'dragonborn',
     slo: [
-      {word: 'zmajeroden', wordExtras: [{type: 'ž.', word: 'zmajerodna'}], usage: ['D&D/rase'], type: [types.Dnd, types.DndRace], note: '"Dragonborn" je v angleščini množinski samostalnik, zato je prvi prevod tudi v množini.'},
-      {word: 'zmajerodni', usage: ['D&D/rase'], type: [types.Dnd, types.DndRace], note: '"Dragonborn" je v angleščini množinski samostalnik, zato je prvi prevod tudi v množini.'},
-      {word: 'zmajik', via: 'Sneikss', usage: ['D&D/rase'], type: [types.Dnd, types.DndRace]},
+      {word: 'zmajeroden', wordExtras: [{type: 'ž.', word: 'zmajerodna'}], usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace], note: '"Dragonborn" je v angleščini množinski samostalnik, zato je prvi prevod tudi v množini.'},
+      {word: 'zmajerodni', usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace], note: '"Dragonborn" je v angleščini množinski samostalnik, zato je prvi prevod tudi v množini.'},
+      {word: 'zmajik', via: 'Sneikss', usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace]},
     ],
   }, {
     en: 'lizardfolk',
     slo: [
-      {word: 'luskin', wordExtras: [{type: 'ž.', word: 'luskinka'}], via: 'Sneikss', type: [types.Dnd, types.DndRace]},
-      {word: 'luskini', via: 'Sneikss', type: [types.Dnd, types.DndRace]}
+      {word: 'luskin', wordExtras: [{type: 'ž.', word: 'luskinka'}], via: 'Sneikss', type: [WordType.Dnd, WordType.DndRace]},
+      {word: 'luskini', via: 'Sneikss', type: [WordType.Dnd, WordType.DndRace]}
     ]
   }, {
     en: 'drow',
     slo: [
-      {word: 'temin', wordExtras: [{type: 'ž.', word: 'teminka'}], via: 'Sneikss', usage: ['D&D/rase'], type: [types.Dnd, types.DndRace]},
-      {word: 'temni vilin', wordExtras: [{type: 'ž.', word: 'temna vilinka'}], usage: ['D&D/rase'], type: [types.Dnd, types.DndRace]},
-      {word: 'podmračnik', wordExtras: [{type: 'ž.', word: 'podmračnica'}], via: 'Sneikss', usage: ['D&D/rase'], type: [types.Dnd, types.DndRace], note: 'Rajši se uporablja "temin" oz. "temni vilin" — razen v primeru, da se govori o njihovem izvoru.'},
-      {word: 'podbrodar', wordExtras: [{type: 'ž.', word: 'podbrodarka'}], usage: ['D&D/rase'], type: [types.Dnd, types.DndRace], note: 'Rajši se uporablja "temin" oz. "temni vilin" — razen v primeru, da se govori o njihovem izvoru.'},
+      {word: 'temin', wordExtras: [{type: 'ž.', word: 'teminka'}], via: 'Sneikss', usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace]},
+      {word: 'temni vilin', wordExtras: [{type: 'ž.', word: 'temna vilinka'}], usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace]},
+      {word: 'podmračnik', wordExtras: [{type: 'ž.', word: 'podmračnica'}], via: 'Sneikss', usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace], note: 'Rajši se uporablja "temin" oz. "temni vilin" — razen v primeru, da se govori o njihovem izvoru.'},
+      {word: 'podbrodar', wordExtras: [{type: 'ž.', word: 'podbrodarka'}], usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace], note: 'Rajši se uporablja "temin" oz. "temni vilin" — razen v primeru, da se govori o njihovem izvoru.'},
     ]
   }, {
     en: 'warforged',
     slo: [
-      {word: 'železnik', usage: ['D&D/rase'], type: [types.Dnd, types.DndRace]}
+      {word: 'železnik', usage: ['D&D/rase'], type: [WordType.Dnd, WordType.DndRace]}
     ]
   },
   //#endregion
@@ -122,69 +112,69 @@ var wordlist = Object.freeze([
   {
     en: 'artificer',
     slo: [
-      {word: 'znajdbar', wordExtras: [{type: 'ž.', word: 'znajdbarka'}], via: 'Sneikss', rfc: true, usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass]}
+      {word: 'znajdbar', wordExtras: [{type: 'ž.', word: 'znajdbarka'}], via: 'Sneikss', rfc: true, usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass]}
     ]
   }, {
     en: 'barbarian',
     slo: [
-      {word: 'barbar', wordExtras: [{type: 'ž.', word: 'barbarka'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass]}
+      {word: 'barbar', wordExtras: [{type: 'ž.', word: 'barbarka'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass]}
     ]
   }, {
     en: 'fighter', 
     slo: [
-      {word: 'borec', wordExtras: [{type: 'ž.', word: 'borka'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass]}
+      {word: 'borec', wordExtras: [{type: 'ž.', word: 'borka'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass]}
     ]
   }, {
     en: 'bard',
     slo: [
-      {word: 'godec', wordExtras: [{type: 'ž.', word: 'pevka'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass]},
-      {word: 'vsejebač', usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], note: 'Ok to je šala, nekdo je preveč /r/dndmemes gledal.'}
+      {word: 'godec', wordExtras: [{type: 'ž.', word: 'pevka'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass]},
+      {word: 'vsejebač', usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], note: 'Ok to je šala, nekdo je preveč /r/dndmemes gledal.'}
     ]
   }, {
     en: 'cleric',
     slo: [
-      {word: 'svečenik', wordExtras: [{type: 'ž.', word: 'svečenica'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], via: 'Sneikss'}
+      {word: 'svečenik', wordExtras: [{type: 'ž.', word: 'svečenica'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], via: 'Sneikss'}
     ]
   }, {
     en: 'rogue',
     slo: [
-      {word: 'zmikavt', wordExtras: [{type: 'ž.', word: 'zmikavtinja'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], via: 'Sneikss'},
+      {word: 'zmikavt', wordExtras: [{type: 'ž.', word: 'zmikavtinja'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], via: 'Sneikss'},
     ]
   }, {
     en: 'rouge',
     slo: [
-      {word: 'zmikavt', wordExtras: [{type: 'ž.', word: 'zmikavtinja'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], via: 'Sneikss', note: 'Pa po angleško se pravilno reče \'rogue\', prosim hvala.'},
+      {word: 'zmikavt', wordExtras: [{type: 'ž.', word: 'zmikavtinja'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], via: 'Sneikss', note: 'Pa po angleško se pravilno reče \'rogue\', prosim hvala.'},
     ]
   }, {
     en: 'monk',
     slo: [
-      {word: 'menih', wordExtras: [{type: 'ž.', word: 'redovnica'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], note: 'Določanje ženske oblike je smešno, tako da se tudi za ženske lahko uporablja tudi moška oblika (menih).'},
+      {word: 'menih', wordExtras: [{type: 'ž.', word: 'redovnica'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], note: 'Določanje ženske oblike je smešno, tako da se tudi za ženske lahko uporablja tudi moška oblika (menih).'},
     ]
   }, {
     en: 'wizard',
     slo: [
-      {word: 'čarovnik', wordExtras: [{type: 'ž.', word: 'čarovnica'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass]}
+      {word: 'čarovnik', wordExtras: [{type: 'ž.', word: 'čarovnica'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass]}
     ]
   }, {
     en: 'sorcerer',
     slo: [
-      {word: 'čarodej', wordExtras: [{type: 'ž.', word: 'čarodejka'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass]}
+      {word: 'čarodej', wordExtras: [{type: 'ž.', word: 'čarodejka'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass]}
     ]
   }, {
     en: 'warlock',
     slo: [
-      {word: 'coprnik', wordExtras: [{type: 'ž.', word: 'coprnica'}], usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], via: 'Sneikss'},
-      {word: 'vešč', usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], via: 'Sneikss'},
+      {word: 'coprnik', wordExtras: [{type: 'ž.', word: 'coprnica'}], usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], via: 'Sneikss'},
+      {word: 'vešč', usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], via: 'Sneikss'},
     ]
   }, {
     en: 'druid',
     slo: [
-      {word: 'druid', usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], note: 'Nima posebne oblike za ženski spol.'}
+      {word: 'druid', usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], note: 'Nima posebne oblike za ženski spol.'}
     ]
   }, {
     en: 'paladin',
     slo: [
-      {word: 'paladin', usage: ['D&D/razredi'], type: [types.Dnd, types.DndClass], note: 'Prevajanje tega izraza je bojda haram.'}
+      {word: 'paladin', usage: ['D&D/razredi'], type: [WordType.Dnd, WordType.DndClass], note: 'Prevajanje tega izraza je bojda haram.'}
     ]
   },
   //#endregion
@@ -197,23 +187,23 @@ var wordlist = Object.freeze([
     {
     en: 'driftglobe', 
     slo: [
-      {word: 'drskugla', usage: ['D&D/predmeti'], type: [types.Dnd, types.DndItem]},
-      {word: 'drskrogla', usage: ['D&D/predmeti'], type: [types.Dnd, types.DndItem]}
+      {word: 'drskugla', usage: ['D&D/predmeti'], type: [WordType.Dnd, WordType.DndItem]},
+      {word: 'drskrogla', usage: ['D&D/predmeti'], type: [WordType.Dnd, WordType.DndItem]}
     ]
   }, {
     en: 'bag of holding',
     slo: [
-      {word: 'žakelj hrambe', usage: ['D&D/predmeti'], type: [types.Dnd, types.DndItem], via: 'Sneikss'}
+      {word: 'žakelj hrambe', usage: ['D&D/predmeti'], type: [WordType.Dnd, WordType.DndItem], via: 'Sneikss'}
     ]
   }, {
     en: 'deck of many things',
     slo: [
-      {word: 'kupček mnogočesa', usage: ['D&D/predmeti'], type: [types.Dnd, types.DndItem], via: 'Sneikss' }
+      {word: 'kupček mnogočesa', usage: ['D&D/predmeti'], type: [WordType.Dnd, WordType.DndItem], via: 'Sneikss' }
     ]
   }, {
     en: 'three-dragon ante',
     slo: [
-      {word: 'trozmajski zastavek', rfc: true, usage: ['D&D/igre'], type: [types.Dnd]}
+      {word: 'trozmajski zastavek', rfc: true, usage: ['D&D/igre'], type: [WordType.Dnd]}
     ]
   }, {
     en: 'spell scroll',
@@ -233,7 +223,7 @@ var wordlist = Object.freeze([
   }, {
     en: 'Lightning rail',
     slo: [
-      {word: 'strelopot', usage: ['Predmeti'], types: [types.Dnd, types.DndItem]}
+      {word: 'strelopot', usage: ['Predmeti'], types: [WordType.Dnd, WordType.DndItem]}
     ]
   },
   //#endregion
@@ -325,8 +315,8 @@ var wordlist = Object.freeze([
   }, {
     en: 'plane',
     slo: [
-      {word: 'ravan', usage: ['D&D/čarovništvo'], types: [types.Dnd, types.DndMonster], via: 'Sneikss'},
-      {word: 'plan', usage: ['D&D/čarovništvo'], types: [types.Dnd, types.DndMonster], via: 'Sneikss'}
+      {word: 'ravan', usage: ['D&D/čarovništvo'], types: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'},
+      {word: 'plan', usage: ['D&D/čarovništvo'], types: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'}
     ]
   },
   //#endregion
@@ -339,29 +329,29 @@ var wordlist = Object.freeze([
   {
     en: 'Underark',
     slo: [
-      {word: 'Podmračje', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace], via: 'Sneikss'},
+      {word: 'Podmračje', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace], via: 'Sneikss'},
     ]
   }, {
     en: 'Feywild',
     slo: [
-    {word: 'Vselesje', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace], via: 'Sneikss'},
-    {word: 'Vilje', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace] },
+    {word: 'Vselesje', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace], via: 'Sneikss'},
+    {word: 'Vilje', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace] },
     ]
   }, {
     en: 'The 9 Hells',
     slo: [
-      {word: 'Devet peklov', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace], via: 'Sneikss'},
+      {word: 'Devet peklov', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace], via: 'Sneikss'},
     ]
   }, {
     en: 'The Abyss',
     slo: [
-      {word: 'Brezno', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace], via: 'Sneikss', notes: 'Ne škodi, če se namesto tega reče brezlo.'},
+      {word: 'Brezno', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace], via: 'Sneikss', notes: 'Ne škodi, če se namesto tega reče brezlo.'},
     ]
   }, {
     en: 'Astral Sea',
     slo: [
-      {word: 'Zvezdno morje', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace]},
-      {word: 'Zvezno morje', usage: ['D&D/mesta'], type: [types.DnD, types.DndPlace], notes: 'Izvirno tipkarska napaka imena <i>‘zvezno morje’</i>, vendar pa se je v določenih krogih obdržalo to poimenovanje.'},
+      {word: 'Zvezdno morje', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace]},
+      {word: 'Zvezno morje', usage: ['D&D/mesta'], type: [WordType.Dnd, WordType.DndPlace], notes: 'Izvirno tipkarska napaka imena <i>‘zvezno morje’</i>, vendar pa se je v določenih krogih obdržalo to poimenovanje.'},
     ]
   },
   //#endregion
@@ -424,19 +414,19 @@ var wordlist = Object.freeze([
   {
     en: 'lycanthrope',
     slo: [
-      { word: 'raznodlak', wordExtras: [{type: 'ž.', word: 'raznodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki', 'D&D'], type: [types.Dnd, types.DndMonster], note: '"Lyncanthrope" v angleščini sicer pomeni volkodlak, vendar pa se za nadskupino volkodlakov (ki vključuje tudi medvedodlake, tigrodlake, svinjedlake itd.) beseda \'raznodlak\' zdi bolj primerna. Manj fancy angleška beseda je "werebeast." Kot pravilo palca se imena raznodlakov iz angleščine prevaja tako: were[something] -> [nekej]dlak.'},
+      { word: 'raznodlak', wordExtras: [{type: 'ž.', word: 'raznodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki', 'D&D'], type: [WordType.Dnd, WordType.DndMonster], note: '"Lyncanthrope" v angleščini sicer pomeni volkodlak, vendar pa se za nadskupino volkodlakov (ki vključuje tudi medvedodlake, tigrodlake, svinjedlake itd.) beseda \'raznodlak\' zdi bolj primerna. Manj fancy angleška beseda je "werebeast." Kot pravilo palca se imena raznodlakov iz angleščine prevaja tako: were[something] -> [nekej]dlak.'},
       { word: 'volkodlak', wordExtras: [{type: 'ž.', word: 'volkodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], note: 'Samo za primere, ko se "lyncanthrope" uporablja zgolj za volkodlake in ne tudi za sorodne stvari (npr. medvedodlake, tigrodlake, svinjedlake).'}
     ]
   }, {
     en: 'lycanthropes',
     slo: [
-      { word: 'raznodlaki', wordExtras: [{type: 'ž.', word: 'raznodlakinje'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki', 'D&D'], type: [types.Dnd, types.DndMonster], note: '"Lyncanthrope" v angleščini sicer pomeni volkodlak, vendar pa se za nadskupino volkodlakov (ki vključuje tudi medvedodlake, tigrodlake, svinjedlake itd.) beseda \'raznodlak\' zdi bolj primerna. Manj fancy angleška beseda je "werebeasts."  Kot pravilo palca se imena raznodlakov iz angleščine prevaja tako: were[something] -> [nekej]dlak.'},
+      { word: 'raznodlaki', wordExtras: [{type: 'ž.', word: 'raznodlakinje'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki', 'D&D'], type: [WordType.Dnd, WordType.DndMonster], note: '"Lyncanthrope" v angleščini sicer pomeni volkodlak, vendar pa se za nadskupino volkodlakov (ki vključuje tudi medvedodlake, tigrodlake, svinjedlake itd.) beseda \'raznodlak\' zdi bolj primerna. Manj fancy angleška beseda je "werebeasts."  Kot pravilo palca se imena raznodlakov iz angleščine prevaja tako: were[something] -> [nekej]dlak.'},
       { word: 'volkodlaki', wordExtras: [{type: 'ž.', word: 'volkodlakinje'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], note: 'Samo za primere, ko se "lyncanthrope" uporablja zgolj za volkodlake in ne tudi za sorodne stvari (npr. medvedodlake, tigrodlake, svinjedlake).'}
     ]
   }, {
     en: 'lycanthropy',
     slo: [
-      {word: 'raznodlaštvo',  usage: ['Prekletstva'], type: [types.Dnd, types.DndMonster, types.DndSpell, types.DndCurse], note: "Prekletstvo, zaradi katerih so raznodlaki raznodlaki."},
+      {word: 'raznodlaštvo',  usage: ['Prekletstva'], type: [WordType.Dnd, WordType.DndMonster, WordType.DndSpell, WordType.DndCurse], note: "Prekletstvo, zaradi katerih so raznodlaki raznodlaki."},
       {word: 'volkodšatvo',  usage: ['Prekletstva'], note: '"Prekletstvo, zaradi katerih so volkodlaki volkodlaki. Samo za primere, ko se "lyncanthropy" uporablja zgolj za volkodlaštvo in ne tudi za sorodne stvari (npr. medvedodlake, tigrodlake, svinjedlake)."'}
     ]
   }, {
@@ -447,22 +437,22 @@ var wordlist = Object.freeze([
   }, {
     en: 'werebear',
     slo: [
-      {word: 'medvedodlak', wordExtras: [{type: 'ž.', word: 'medvedodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [types.Dnd, types.DndMonster]}
+      {word: 'medvedodlak', wordExtras: [{type: 'ž.', word: 'medvedodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'wererat',
     slo: [
-      {word: 'podganjedlak', wordExtras: [{type: 'ž.', word: 'podganjedlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [types.Dnd, types.DndMonster]}
+      {word: 'podganjedlak', wordExtras: [{type: 'ž.', word: 'podganjedlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'weretiger',
     slo: [
-      {word: 'tigrodlak', wordExtras: [{type: 'ž.', word: 'tigrodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [types.Dnd, types.DndMonster]}
+      {word: 'tigrodlak', wordExtras: [{type: 'ž.', word: 'tigrodlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'wereboar',
     slo: [
-      {word: 'svinjedlak', wordExtras: [{type: 'ž.', word: 'svinjedlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [types.Dnd, types.DndMonster]}
+      {word: 'svinjedlak', wordExtras: [{type: 'ž.', word: 'svinjedlakinja'}], usage: ['Pošasti', 'Bitja', 'Raznodlaki'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   },
   //#endregion
@@ -470,32 +460,32 @@ var wordlist = Object.freeze([
   {
     en: 'stone giant',
     slo: [
-      {word: 'ajd', src: 'Hobbit', usage: ['Bitja', 'Velikani'], type: [types.Dnd, types.DndMonster], note: 'Nima posebne oblike za ženski spol. Bojda so v Hobitu "stone giants" prevedli kot ajdi'}
+      {word: 'ajd', src: 'Hobbit', usage: ['Bitja', 'Velikani'], type: [WordType.Dnd, WordType.DndMonster], note: 'Nima posebne oblike za ženski spol. Bojda so v Hobitu "stone giants" prevedli kot ajdi'}
     ]
   }, {
     en: 'cloud giant',
     slo: [
-      {word: 'oblačnik', wordExtras: [{type: 'ž.', word: 'oblačnica'}], usage: ['Bitja', 'Velikani'], type: [types.Dnd, types.DndMonster]}
+      {word: 'oblačnik', wordExtras: [{type: 'ž.', word: 'oblačnica'}], usage: ['Bitja', 'Velikani'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'frost giant',
     slo: [
-      {word: 'lednik', wordExtras: [{type: 'ž.', word: 'lednica'}], usage: ['Bitja', 'Velikani'], type: [types.Dnd, types.DndMonster]}
+      {word: 'lednik', wordExtras: [{type: 'ž.', word: 'lednica'}], usage: ['Bitja', 'Velikani'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'fire giant',
     slo: [
-      {word: 'ognjevnik', wordExtras: [{type: 'ž.', word: 'ognjevnica'}], rfc: true,  usage: ['Bitja', 'Velikani'], type: [types.Dnd, types.DndMonster]}
+      {word: 'ognjevnik', wordExtras: [{type: 'ž.', word: 'ognjevnica'}], rfc: true,  usage: ['Bitja', 'Velikani'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'storm giant',
     slo: [
-      {word: 'nevihtnik', wordExtras: [{type: 'ž.', word: 'nevihtnica'}], usage: ['Bitja', 'Velikani'], type: [types.Dnd, types.DndMonster]}
+      {word: 'nevihtnik', wordExtras: [{type: 'ž.', word: 'nevihtnica'}], usage: ['Bitja', 'Velikani'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   }, {
     en: 'hill giant', 
     slo: [
-      {word: 'hribovnik', wordExtras: [{type: 'ž.', word: 'hribovnica'}], usage: ['Bitja', 'Velikani'], type: [types.Dnd, types.DndMonster]}
+      {word: 'hribovnik', wordExtras: [{type: 'ž.', word: 'hribovnica'}], usage: ['Bitja', 'Velikani'], type: [WordType.Dnd, WordType.DndMonster]}
     ]
   },
   //#endregion
@@ -503,14 +493,14 @@ var wordlist = Object.freeze([
   {
     en: 'mind flayer',
     slo: [
-      {word: 'umovor', usage: ['Pošasti', 'Bitja'], type: [types.Dnd, types.DndMonster], via: 'Sneikss', note: 'Nima posebne oblike za ženski spol.'}
+      {word: 'umovor', usage: ['Pošasti', 'Bitja'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss', note: 'Nima posebne oblike za ženski spol.'}
     ],
   }, {
     en: 'beholder',
     slo: [
-      {word: 'motrivec', wordExtras: [{type: 'ž.', word: 'motrivka'}], usage: ['Pošasti', 'Bitja'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'},
-      {word: 'buljež', usage: ['Pošasti', 'Bitja'], type: [types.Dnd, types.DndMonster], via: 'Sneikss', note: 'Nima posebne oblike za ženski spol.'},
-      {word: 'očividec', wordExtras: [{type: 'ž.', word: 'očividka'}], usage: ['Pošasti', 'Bitja'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'}
+      {word: 'motrivec', wordExtras: [{type: 'ž.', word: 'motrivka'}], usage: ['Pošasti', 'Bitja'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'},
+      {word: 'buljež', usage: ['Pošasti', 'Bitja'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss', note: 'Nima posebne oblike za ženski spol.'},
+      {word: 'očividec', wordExtras: [{type: 'ž.', word: 'očividka'}], usage: ['Pošasti', 'Bitja'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'}
     ],
   }, {
     en: 'lich', 
@@ -521,8 +511,8 @@ var wordlist = Object.freeze([
   }, {
     en: 'dracolich', 
     slo: [
-      {word: 'zmijegnoba', usage: ['Pošasti', 'Bitja'], type: [types.Dnd, types.DndMonster] },
-      {word: 'zmijegnor', rfc: true, usage: ['Pošasti', 'Bitja'], type: [types.Dnd, types.DndMonster], note: 'Priporočeno *gnoba?', via: 'Sneikss'},
+      {word: 'zmijegnoba', usage: ['Pošasti', 'Bitja'], type: [WordType.Dnd, WordType.DndMonster] },
+      {word: 'zmijegnor', rfc: true, usage: ['Pošasti', 'Bitja'], type: [WordType.Dnd, WordType.DndMonster], note: 'Priporočeno *gnoba?', via: 'Sneikss'},
     ]
   }, {
     en: 'archlich', 
@@ -533,7 +523,7 @@ var wordlist = Object.freeze([
   }, {
     en: 'celestial',
     slo: [
-      {word: 'nebesnik', wordExtras: [{type: 'ž.', word: 'nebesnica'}], usage: ['Bitja'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'}
+      {word: 'nebesnik', wordExtras: [{type: 'ž.', word: 'nebesnica'}], usage: ['Bitja'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'}
     ]
   }, {
     en: 'fey',
@@ -558,20 +548,20 @@ var wordlist = Object.freeze([
   }, {
     en: 'fiend', 
     slo: [
-      {word: 'nestvor', usage: ['Pošasti'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'},
-      {word: 'mrznik', usage: ['Pošasti'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'},
-      {word: 'črt', usage: ['Pošasti'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'},
+      {word: 'nestvor', usage: ['Pošasti'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'},
+      {word: 'mrznik', usage: ['Pošasti'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'},
+      {word: 'črt', usage: ['Pošasti'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'},
     ]
   }, {
     en: 'aberration',
     slo: [
-      {word: 'nakazen', usage: ['Pošasti'], type: [types.Dnd, types.DndMonster], via: 'Sneikss'}
+      {word: 'nakazen', usage: ['Pošasti'], type: [WordType.Dnd, WordType.DndMonster], via: 'Sneikss'}
     ]
   }, {
     en: 'elemental',
     slo: [
-      {word: 'prvinec', usage: ['Pošasti'], types: [types.Dnd, types.DndMonster], notes: 'Prvinci so načeloma brezspolna bitja, tako da ženske oblike ni.'},
-      {word: 'prvinski', usage: ['Pošasti'], types: [types.Dnd, types.DndMonster]},
+      {word: 'prvinec', usage: ['Pošasti'], types: [WordType.Dnd, WordType.DndMonster], notes: 'Prvinci so načeloma brezspolna bitja, tako da ženske oblike ni.'},
+      {word: 'prvinski', usage: ['Pošasti'], types: [WordType.Dnd, WordType.DndMonster]},
     ]
   },
   //#endregion razno
@@ -879,7 +869,6 @@ var wordlist = Object.freeze([
 
 
 var Dictionary = {
-  types: types,
   wordlist: wordlist,
 }
 
