@@ -1,11 +1,39 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Slovarček</router-link> |
-    <router-link to="/about">O strani</router-link> |
-    <router-link to="/durin">Temni kotiček</router-link>
+  <div class="h100 flex flex-column">
+    <div id="nav" class="flex-nogrow flex-noshrink">
+      <router-link to="/">Slovarček</router-link> |
+      <router-link to="/about">O strani</router-link> |
+      <router-link to="/durin">Temni kotiček</router-link>
+    </div>
+    <div class="router-view flex-grow">
+      <router-view/>
+    </div>
   </div>
-  <router-view/>
 </template>
+
+<style lang="scss">
+.flex {
+  display: flex;
+}
+.flex-row {
+  flex-direction: row;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-grow {
+  flex-grow: 1;
+}
+.flex-nogrow {
+  flex-grow: 0;
+}
+.flex-shrink {
+  flex-shrink: 1;
+}
+.flex-noshrink {
+  flex-shrink: 0;
+}
+</style>
 
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Vollkorn&family=Vollkorn+SC&display=swap&subset=latin-ext');
@@ -29,9 +57,12 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  height: 100%;
+  width: 100%;
 }
 
 #nav {
+  display: block;
   background-color: #382a1e;
 
   padding: 1rem;
@@ -46,7 +77,10 @@ html, body {
   }
 }
 
-
+.router-view {
+  height: 100%;
+  width: 100%;
+}
 
 a {
   color: rgb(172, 103, 48);
@@ -182,6 +216,10 @@ b {
 .footer {
   display: fixed;
   bottom: 0px;
+}
+
+.h100 {
+  height: 100%;
 }
 </style>
 
