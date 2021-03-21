@@ -192,10 +192,10 @@ export default defineComponent({
         if (this.word.id) {
           const wordIndex = this.existingWords.findIndex(x => x.id === this.word.id);
           this.existingWords[wordIndex] = res.data;
-          this.selectedWord = res.data;
+          this.selectWord(res.data);
         } else {
           this.existingWords.push(res.data);
-          this.selectedWord = res.data;
+          this.selectWord(res.data);
         }
 
         this.showAddWord = false;
