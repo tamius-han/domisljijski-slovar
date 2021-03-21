@@ -16,7 +16,7 @@
                 Prioriteta prevoda
               </div>
               <div class="input">
-                <input>
+                <input v-model="translationPriority">
               </div>
             </div>
             <div class="field">
@@ -24,7 +24,7 @@
                 Opombe prevoda
               </div>
               <div class="input-textarea">
-                <textarea></textarea>
+                <textarea v-model="description"></textarea>
               </div>
             </div>
             <div class="field">
@@ -76,7 +76,10 @@ export default defineComponent({
   data() {
     return {
       enWord: undefined as any,
-      slWord: undefined as any
+      slWord: undefined as any,
+      rfc: undefined,
+      description: undefined,
+      translationPriority: undefined,
     }
   },
   methods: {
@@ -96,7 +99,10 @@ export default defineComponent({
         `/translations/`,
         {
           enWordId: this.enWord?.id,
-          slWordId: this.slWord?.id
+          slWordId: this.slWord?.id,
+          priority: this.translationPriority,
+          rfc: this.rfc,
+          description: this.translationDescription
         }
       );
     },
