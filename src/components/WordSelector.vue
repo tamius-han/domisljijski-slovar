@@ -1,15 +1,15 @@
 <template>
   <div class="root">
-    <h3>{{language}}</h3>
+    <h2>{{language}}</h2>
     <div class="field">
       <div class="label">Beseda:</div>
       <div class="input">
         <input
-          v-model="word.word"
+          v-debounce:1s="searchExisting"
         >
       </div>
 
-      <div class="label">Če beseda že obstaja, izberi želeno besedo s klikom.</div>
+      <div class="label">Obstoječi pomeni</div>
       <div class="suggestions">
         <div
           v-for="existingWord of existingWords"
@@ -33,12 +33,23 @@
             <div class="notes">{{existingWord.notes}}</div>
           </div>
         </div>
+        <div 
+          class="add-new-word-button suggestion"
+          :class="{'selected': showAddWord && selectedWord?.id === null}"
+          @click="selectWord({id: null, word: search})"
+        >
+          Dodaj nov pomen oz. izraz
+        </div>
       </div>
     </div>
-    <div class="add-new-word-button" @click="showAddWord()">
-      Dodaj nov pomen
-    </div>
-    <div class="add-new-word">
+    <div v-if="showAddWord" class="add-new-word">
+      <h3 v-if="selectedWord.id">Uredi besedo oz. pomen</h3>
+      <h3 v-else>Dodaj besedo oz. pomen</h3>
+      <div class="field">
+        <div v-if="word.id" class="label">
+          ID: {{word.id}}
+        </div>
+      </div>
       <div class="field">
         <div class="label">Beseda:</div>
         <div class="input">
@@ -80,19 +91,26 @@
           <textarea v-model="word.notes"></textarea>
         </div>
       </div>
-    </div>
-    <div class="add-button-outer">
-      <div
-        class="button"
-        @click="addWord()"
-      >
-        Dodaj besedo
+
+      <div class="add-button-outer">
+        <div
+          class="button"
+          @click="saveWord()"
+        >
+          <template v-if="word.id">
+            Posodobi pomen oz. besedo
+          </template>
+          <template v-else>
+            Dodaj pomen oz. besedo
+          </template>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
 
 export default defineComponent({
@@ -101,44 +119,97 @@ export default defineComponent({
     'languageKey',
     'selectedWordId'
   ],
+  mixins: [
+    requestMixin
+  ],
   data() {
     return {
-      existingWords: [
-        {
-          id: 1,
-          word: 'zmajeroden',
-          word_f: 'zmajerodna',
-          word_plural: 'zmajerodni',
-          description: 'opis za testiranje',
-          notes: 'translator notes for this word'
-        },
-        {
-          id: 2,
-          word: 'znajdbar',
-          rfc: true,
-          word_f: 'znajdbarka'
-        }
-      ],
+      existingWords: [] as any[],
       search: '',
-      showAddWord: true,
-      word: {},
-      selectedWord: null,
+      showAddWord: false,
+
+      // this is the word we edit
+      word: {
+        id: null,
+        word: '',
+        word_f: null,
+        word_m: null,
+        word_plural: null,
+        description: null,
+        notes: null,
+        rfc: null,
+      },
+      // this is the word as displayed
+      selectedWord: {
+        id: null,
+        word: '',
+        word_f: null,
+        word_m: null,
+        word_plural: null,
+        description: null,
+        notes: null,
+        rfc: null,
+      },
     }
   },
   methods: {
     selectWord(selectedWord: any) {
       this.selectedWord = selectedWord;
-
       this.$emit('change', this.selectedWord);
-    },
-    async addWord() {
 
+      // allow editing. Always edit copy, not the main word.
+      this.word = JSON.parse(JSON.stringify(selectedWord));
+      this.showAddWord = true;
+    },
+    async searchExisting(search: string) {
+      this.showAddWord = false;
+
+      this.selectedWord = {} as any;
+      this.search = search;
+      
+      try {
+        const res = await this.get(`/words/?s=${search}&lang=${this.languageKey}`);
+        this.existingWords = res.data;
+      } catch (e) {
+        console.error('Fetching words failed. Error:', e);
+      }
+    },
+    async saveWord(forceNewWord?: boolean) {
+      try {
+        if (forceNewWord) {
+          this.word.id = null;
+        }
+
+        const res = await this.post(
+          `/words/`,
+          {
+            ... this.word,
+            lang: this.languageKey
+          }
+        );
+
+        // if we edited a word, otherwise we append
+        if (this.word.id) {
+          const wordIndex = this.existingWords.findIndex(x => x.id === this.word.id);
+          this.existingWords[wordIndex] = res.data;
+          this.selectedWord = res.data;
+        } else {
+          this.existingWords.push(res.data);
+          this.selectedWord = res.data;
+        }
+
+        this.showAddWord = false;
+      } catch (e) {
+        console.error('Error while adding or updating word:', e);
+      }
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
+$primary-text: rgb(172, 103, 48);
+
 .root {
   width: 24rem;
   max-width: 100%;
@@ -148,27 +219,12 @@ export default defineComponent({
   box-sizing: border-box;
 }
 
-.field {
-  width: 100%;
-  margin-top: 0.2rem;
-}
 
-.label {
-  color: #382a1e;
-}
-
-.input, .input-textarea {
-  box-sizing: border-box;
-  width: 100%;
-  
-  input {
-    box-sizing: border-box;
-    width: 100%;
-  }
-  textarea {
-    box-sizing: border-box;
-    width: 100%;
-  }
+h2 {
+  text-align: center;
+  font-family: 'Josefin Sans';
+  font-weight: 200;
+  font-size: 2rem;
 }
 
 .suggestions {
@@ -185,6 +241,7 @@ export default defineComponent({
 
   .word {
     font-family: 'Vollkorn';
+    color: $primary-text;
 
     .gender-plural {
       font-size: 0.72em;
