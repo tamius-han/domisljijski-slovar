@@ -35,8 +35,59 @@
 }
 </style>
 
+
+<style lang="scss">
+// forms & stuff
+
+.field {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.label {
+  color: #382a1e;
+}
+
+.input, .input-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  
+  input {
+    box-sizing: border-box;
+    width: 100%;
+  }
+  textarea {
+    box-sizing: border-box;
+    width: 100%;
+  }
+}
+
+.button {
+  cursor: pointer;
+  // margin: 0 auto;
+  // width: 16rem;
+  text-align: center;
+  border: 1px solid #ffbc8f;
+  color: #ffbc8f;
+  padding: 0.69rem 1.5rem;
+  // font-size: 2rem;
+
+  background-color: #241b14c5;
+}
+.button:hover {
+  background-color: #ffbc8fde;
+  color: #382a1e;
+
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+</style>
+
 <style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Vollkorn&family=Vollkorn+SC&display=swap&subset=latin-ext');
+@import url('./colors.scss');
+
+$primary-text: rgb(172, 103, 48);
+
 
 html, body {
   font-family: 'Josefin Sans', sans-serif;
@@ -55,13 +106,13 @@ html, body {
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  // text-align: center;
   height: 100%;
   width: 100%;
 }
 
 #nav {
+  text-align: center;
   display: block;
   background-color: #382a1e;
 
@@ -98,7 +149,7 @@ h1, h2 {
 
 h1 {
   font-family: 'Vollkorn', serif;
-  color: rgb(172, 103, 48);
+  color: $primary-text;
   font-size: 3rem;
 
   text-align: center;
