@@ -1,70 +1,68 @@
 <template>
   <div class="root">
-    <div v-if="showAddWord" class="add-new-word">
-      <div
-        v-if="!languageKey"
-        class="field"
-      >
-        <div class="label">Jezik</div>
-        <div class="flex flex-row">
-          <div><input v-model="selectedLanguage" name="language" type="radio" value='en' /> Angleščina</div>
-          <div><input v-model="selectedLanguage" name="language" type="radio" value='sl' /> Slovenščina</div>
-        </div>
+    <div
+      v-if="!languageKey && !word.id"
+      class="field"
+    >
+      <div class="label">Jezik</div>
+      <div class="flex flex-row">
+        <div><input v-model="selectedLanguage" name="language" type="radio" value='en' /> Angleščina</div>
+        <div><input v-model="selectedLanguage" name="language" type="radio" value='sl' /> Slovenščina</div>
       </div>
-      <div class="field">
-        <div class="label">Beseda:</div>
-        <div class="input">
-          <input v-model="word.word">
-        </div>
+    </div>
+    <div class="field">
+      <div class="label">Beseda:</div>
+      <div class="input">
+        <input v-model="word.word">
       </div>
-      <div class="field">
-        <div class="label">Moška oblika (če obstaja):</div>
-        <div class="input">
-          <input v-model="word.word_m">
-        </div>
+    </div>
+    <div class="field">
+      <div class="label">Moška oblika (če obstaja):</div>
+      <div class="input">
+        <input v-model="word.word_m">
       </div>
-      <div class="field">
-        <div class="label">Ženska oblika (če obstaja):</div>
-        <div class="input">
-          <input v-model="word.word_f">
-        </div>
+    </div>
+    <div class="field">
+      <div class="label">Ženska oblika (če obstaja):</div>
+      <div class="input">
+        <input v-model="word.word_f">
       </div>
-      <div class="field">
-        <div class="label">Množinska oblika (če obstaja):</div>
-        <div class="input">
-          <input v-model="word.word_plural">
-        </div>
+    </div>
+    <div class="field">
+      <div class="label">Množinska oblika (če obstaja):</div>
+      <div class="input">
+        <input v-model="word.word_plural">
       </div>
-      <div class="field">
-        <div class="label"><input type="checkbox" v-model="word.rfc"> Na ravni zamisli</div>
-        <div class="input">
-        </div>
+    </div>
+    <div class="field">
+      <div class="label"><input type="checkbox" v-model="word.rfc"> Na ravni zamisli</div>
+      <div class="input">
       </div>
-      <div class="field">
-        <div class="label">Opis</div>
-        <div class="input-textarea">
-          <textarea v-model="word.description"></textarea>
-        </div>
+    </div>
+    <div class="field">
+      <div class="label">Opis</div>
+      <div class="input-textarea">
+        <textarea v-model="word.description"></textarea>
       </div>
-      <div class="field">
-        <div class="label">Opombe</div>
-        <div class="input-textarea">
-          <textarea v-model="word.notes"></textarea>
-        </div>
+    </div>
+    <div class="field">
+      <div class="label">Opombe</div>
+      <div class="input-textarea">
+        <textarea v-model="word.notes"></textarea>
       </div>
+    </div>
 
-      <div class="add-button-outer">
-        <div
-          class="button"
-          @click="saveWord()"
-        >
-          <template v-if="word.id">
-            Posodobi pomen oz. besedo
-          </template>
-          <template v-else>
-            Dodaj pomen oz. besedo
-          </template>
-        </div>
+    <div class="add-button-outer">
+      <div
+        class="button"
+        @click="saveWord()"
+      >
+        <template v-if="word.id">
+          Posodobi pomen oz. besedo
+        </template>
+        <template v-else>
+          Dodaj pomen oz. besedo
+        </template>
       </div>
     </div>
   </div>
