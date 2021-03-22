@@ -1,6 +1,6 @@
 <template>
   <div class="root">
-    <h2>{{language}}</h2>
+    <h2 v-if="language">{{language}}</h2>
     <div class="field">
       <div class="label">Beseda:</div>
       <div class="input">
