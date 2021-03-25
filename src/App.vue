@@ -167,9 +167,9 @@ h2 {
   font-size: 1.25em;
 }
 
-b {
-  color: #fff;
-}
+// b {
+//   color: #fff;
+// }
 
 .center {
   text-align: center;
