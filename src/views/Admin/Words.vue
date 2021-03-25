@@ -150,7 +150,7 @@
                     <div class="flex flex-row flex-end">
                       <div
                         class="button small secondary"
-                        @click="openForm('editTranslation')"
+                        @click="editTranslation(translation)"
                       >
                         Uredi prevod
                       </div>
@@ -181,7 +181,7 @@
                   Prioriteta prevoda
                 </div>
                 <div class="input">
-                  <input v-model="translationPriority">
+                  <input v-model="translationData.priority">
                 </div>
               </div>
               <div class="field">
@@ -189,12 +189,12 @@
                   Opombe prevoda
                 </div>
                 <div class="input-textarea">
-                  <textarea v-model="description"></textarea>
+                  <textarea v-model="translationData.notes"></textarea>
                 </div>
               </div>
               <div class="field">
                 <div class="field-label">
-                  <input type="checkbox"> Na ravni zamisli
+                  <input type="checkbox" v-model="translationData.rfc"> Na ravni zamisli
                 </div>
               </div>
               <div class="button-wrapper">
@@ -529,12 +529,88 @@ export default defineComponent({
       }
     },
 
-    translationUpdated() {
+    /**
+     * Selects existing translation for update
+     */
+    editTranslation(translation: any) {
+      this.translationData = translation;
 
+      this.openForm('editTranslation');
     },
-    translationCreated() {
 
+    /**
+     * Actually creates translation
+     */
+    async updateTranslation() {
+       try {
+        const res = await this.post(
+          `/translations/`,
+          {
+            id: this.translationData.id,
+            priority: this.translationData.priority,
+            rfc: this.translationData.rfc,
+            notes: this.translationData.notes
+          }
+        );
+        if (res.data.error) {
+          throw res.data;
+        }
+
+        // force refresh the ugly way
+        this.hits = [...this.hits];
+
+        // close everything
+        this.closeForms();
+        this.refreshData();
+      } catch (e) {
+        console.error('Deleting translation failed. Error:', e);
+      }
     },
+
+    /**
+     * Update translation priority
+     */
+    async updateTranslationPriority(hitIndex: number, translationIndex: number, direction: 'up' | 'down') {
+      const otherIndex = direction === 'up' ? translationIndex - 1 : translationIndex + 1;
+
+      // we can't bump first translation forward or last translation backward
+      if (otherIndex < 0 || otherIndex >= this.hits[hitIndex].translations.length) {
+        return;
+      }
+
+      const currentTranslation = this.hits[hitIndex].translations[translationIndex];
+      const otherTranslation = this.hits[hitIndex].translations[otherIndex];
+
+      otherTranslation.priority = currentTranslation.priority + direction === 'up' ? 1 : -1;
+      currentTranslation.priority = currentTranslation.priority + direction === 'up' ? -1 : 1;
+
+      const res = await this.post(
+        `/translations/`,
+        {
+          ...currentTranslation
+        }
+      );
+      if (res.data.error) {
+        throw res.data;
+      }
+
+      const res2 = await this.post(
+        `/translations/`,
+        {
+          ...otherTranslation
+        }
+      );
+      if (res2.data.error) {
+        throw res2.data;
+      }
+
+      this.hits[hitIndex].translations[translationIndex] = otherTranslation;
+      this.hits[hitIndex].translations[otherIndex] = currentTranslation;
+    },
+
+    /**
+     * Deletes translation
+     */
     async deleteTranslation(hitIndex: number, id: any) {
       try {
         const res = await this.delete(
