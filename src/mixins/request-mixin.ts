@@ -41,6 +41,23 @@ const requestMixin = {
           }
         }
       )
+    },
+    async delete(url: string, data?: any, options?: AxiosRequestConfig) {
+      if (! (url.startsWith('http://') || url.startsWith('https://'))) {
+        url = `${env.ADMIN_API_BASE}${url}`;
+      }
+
+      return axios.delete(
+        url,
+        {
+          ...options,
+          headers: {
+            ...options?.headers,
+            'Authorization': this.getAuthToken()
+          },
+          data
+        }
+      )
     }
   }
 };
