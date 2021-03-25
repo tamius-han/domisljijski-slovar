@@ -67,7 +67,10 @@
                   :key="key"
                   class="item"
               >
+
+                <!-- #region source word header -->
                 <div class="source flex flex-row">
+
                   <div class="flag flex-nogrow flex-noshrink">
                     {{hit.langFlag}}
                   </div>
@@ -95,6 +98,7 @@
                     >
                       Uredi
                     </div>
+                    {{hit.translations?.length}}, cond: {{!hit.translations?.length}}
                     <div 
                       v-if="!hit.translations?.length"
                       class="button small"
@@ -104,7 +108,9 @@
                     </div>
                   </div>
                 </div>
+                <!-- #endregion source word header -->
 
+                <!-- #region word translations -->
                 <div class="translation-list">
                   Prevodi:
                   <div v-for="(word, index) of hit.translations" 
@@ -157,16 +163,17 @@
                     </div>
                   </div>
                   <div
-                    class="button"
-                    @click="openForm('addTranslation')"
+                    class="button small secondary"
+                    @click="addTranslationForWord(hit)"
                   >
                     Dodaj nov prevod
                   </div>
                 </div>
+                <!-- #endregion word translations -->
               </div>
             </div>
 
-            <!-- translation add -->
+            <!-- #region translation edit -->
             <div v-if="visibleForms.editTranslation" class="edit-box">
               <h2>Uredi prevod</h2>
               <div class="field">
@@ -191,25 +198,41 @@
                 </div>
               </div>
               <div class="button-wrapper">
-                <div class="button" @click="addTranslation()">Shrani prevod</div>
+                <div class="button" @click="updateTranslation()">Shrani prevod</div>
               </div>
             </div>
+            <!-- #endregion translation edit -->
 
-            <!-- translation edit -->
+            <!-- #region translation add -->
             <div  v-if="visibleForms.addTranslation" class="edit-box">
               <h2>Dodaj prevod</h2>
               <p>
-                Dodajanje prevoda za besedo [vstavi] ([pomen/note]).
+                Dodajanje prevoda za besedo: <b>{{selectedWord?.word ?? '<izberi>'}}</b> <i>{{ 
+                  selectedWord?.description || selectedWord?.notes ?
+                    `(${selectedWord?.description}${
+                      selectedWord?.description && selectedWord.note ?
+                        ' | ' :
+                        ''
+                      }${
+                        selectedWord?.note ?
+                          `opombe besede: ${selectedWord?.notes}` :
+                          ''
+                      }
+                    )` :
+                    ''
+                }}</i>
               </p>
               <word-selector
-                languageKey="en"
+                :languageKey="selectedWord.langKey === 'en' ? 'sl' : 'en'"
+                :disableEditing="true"
+                @change="selectTransationWord($event)"
               ></word-selector>
               <div class="field">
                 <div class="field-label">
                   Prioriteta prevoda
                 </div>
                 <div class="input">
-                  <input v-model="translationPriority">
+                  <input v-model="translationData.priority">
                 </div>
               </div>
               <div class="field">
@@ -217,18 +240,25 @@
                   Opombe prevoda
                 </div>
                 <div class="input-textarea">
-                  <textarea v-model="description"></textarea>
+                  <textarea v-model="translationData.notes"></textarea>
                 </div>
               </div>
               <div class="field">
                 <div class="field-label">
-                  <input type="checkbox"> Na ravni zamisli
+                  <input type="checkbox" v-model="translationData.rfc"> Na ravni zamisli
                 </div>
               </div>
               <div class="button-wrapper">
-                <div class="button" @click="addTranslation()">Shrani prevod</div>
+                <div
+                  class="button"
+                  :class="{'disabled': !translationData?.priority || !this.selectedTranslationWord?.id}"
+                  @click="createTranslation()"
+                >
+                  Shrani prevod
+                </div>
               </div>
             </div>
+            <!-- #endregion translation add -->
 
             <!-- word edit -->
             <div  v-if="visibleForms.editWord" class="edit-box">
@@ -273,6 +303,9 @@ export default defineComponent({
     searchString: string,
     visibleForms: {[x: string]: boolean},
     selectedWord?: any,
+    selectedTranslationWord?: any,
+    translationData: any,
+    notifications: any[],
   } {
     return {
       hits: new Array<any>(),
@@ -284,6 +317,9 @@ export default defineComponent({
         editTranslation: false as boolean,
       },
       selectedWord: undefined,
+      selectedTranslationWord: undefined,
+      translationData: {},
+      notifications: [],
     }
   },
   methods: {
@@ -298,6 +334,9 @@ export default defineComponent({
         return;
       }
       this.getResults(search);
+    },
+    refreshData() {
+      this.getResults(this.searchString);
     },
     async getResults(search: string) {
       const res = await this.get(`/translate/?s=${search}`);
@@ -316,6 +355,7 @@ export default defineComponent({
         for (const d of data) {
           const word = {
             langFlag: '🇬🇧',
+            langKey: 'en',
             id: +d.en_id,
             word: d.en_word,
             word_m: d.en_word_m,
@@ -352,6 +392,7 @@ export default defineComponent({
         for (const d of data) {
           const word = {
             langFlag: '🇸🇮',
+            langKey: 'sl',
             id: +d.sl_id,
             word: d.sl_word,
             word_m: d.sl_word_m,
@@ -391,6 +432,19 @@ export default defineComponent({
     clear() {
       this.hits = [];
     },
+
+    showNotification(notificationText: string, level: 'error' | 'success' | 'warning' | 'info') {
+      const id = Date.now();
+
+      this.notifications.push({
+        level,
+        text: notificationText,
+        id
+      });
+
+      setTimeout(() => this.notifications = this.notifications.filter(x => x.id !== id), 5000);
+    },
+
     openForm(form: 'addWord' | 'editWord' | 'addTranslation' | 'editTranslation') {
       this.closeForms();
       this.visibleForms[form] = true;
@@ -399,36 +453,139 @@ export default defineComponent({
       for (const k in this.visibleForms) {
         this.visibleForms[k] = false;
       }
+
+      // also unset some of the things
+      this.selectedTranslationWord = undefined;
+      this.translationData = {};
     },
     selectWord(word: any) {
+      console.info('selecting a word:', word);
       this.selectedWord = word;
     },
+
+    //#region add word dialog
+    /**
+     * Triggers when word was added from the "add word" dialogue at the top of the page.
+     */
     wordAdded(word: any) {
-      this.hits.push(word);
-      this.selectedWord(word);
+      this.hits = [word];
+      this.selectWord(word);
     },
+
+    /**
+     * Triggers when word was updated from the "add word" dialogue at the top of the page.
+     */
     wordUpdated(word: any) {
       const index = this.hits.findIndex(x => x.id === word.id);
       this.hits[index] = word;
       this.selectWord(word);
     },
+    //#endregion
+
+    //#region translation window
+    /**
+     * Selects a source word and opens 'add translation' dialog
+     */
+    addTranslationForWord(word: any) {
+      this.selectWord(word);
+      this.openForm('addTranslation');
+    },
+    
+    /**
+     * Sets the word that we'll use for translation.
+     */
+    selectTransationWord(word: any) {
+      console.log("selecting translation word:", word);
+      this.selectedTranslationWord = word || {};
+    },
+
+    /**
+     * Actually creates translation
+     */
+    async createTranslation() {
+       try {
+        const res = await this.post(
+          `/translations/`,
+          {
+            enWordId: this.selectedWord.langKey === 'en' ? this.selectedWord.id : this.selectedTranslationWord.id,
+            slWordId: this.selectedWord.langKey === 'en' ? this.selectedTranslationWord.id : this.selectedWord.id,
+            priority: this.translationData.priority,
+            rfc: this.translationData.rfc,
+            notes: this.translationData.notes
+          }
+        );
+        if (res.data.error) {
+          throw res.data;
+        }
+
+        // force refresh the ugly way
+        this.hits = [...this.hits];
+
+        // close everything
+        this.closeForms();
+        this.refreshData();
+      } catch (e) {
+        console.error('Deleting translation failed. Error:', e);
+      }
+    },
+
     translationUpdated() {
 
     },
     translationCreated() {
 
     },
-    deleteTranslation() {
+    async deleteTranslation(hitIndex: number, id: any) {
+      try {
+        const res = await this.delete(
+          `/translations/`,
+          {
+            id
+          }
+        );
+        if (res.data.error) {
+          throw res.data;
+        }
 
+        // remove from the list of translations on successful delete
+        this.hits[hitIndex].translations = this.hits[hitIndex].translations.filter( (x: any) => x.id !== id);
+
+        // force refresh the ugly way
+        this.hits = [...this.hits];
+      } catch (e) {
+        console.error('Deleting translation failed. Error:', e);
+      }
     },
-    deleteWord() {
+    //#endregion
 
+    async deleteWord(wordId: any, languageKey: string) {
+      try {
+        const res = await this.delete(
+          `/words/`,
+          {
+            id: wordId,
+            lang: languageKey
+          }
+        );
+        if (res.data.error) {
+          throw res.data;
+        }
+
+        // remove from the wordlist on successful delete
+        this.hits = this.hits.filter( (x: any) => x.id !== wordId);
+      } catch (e) {
+        console.error('Deleting word failed. Error:', e);
+      }
     }
   }
 })
 </script>
 
 <style lang="scss">
+b {
+  color: #000;
+}
+
 .item {
   .source {
     background-color: rgba(#ffaa66, 0.5);
@@ -443,6 +600,24 @@ export default defineComponent({
 .button {
   &.small {
     padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  &.disabled {
+    filter: brightness(50%) saturate(25%);
+    pointer-events: none;
+  }
+
+  &.secondary {
+    background-color: transparent;
+    color: #382a1e;
+
+    &:hover {
+      background-color: #ffbc8fde;
+
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
   }
 }
 
