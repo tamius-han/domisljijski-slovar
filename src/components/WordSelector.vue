@@ -42,7 +42,7 @@
         </div>
       </div>
     </div>
-    <div v-if="showAddWord" class="add-new-word">
+    <div v-if="showAddWord && (disableEditing && !word.id)" class="add-new-word">
       <h3 v-if="selectedWord.id">Uredi besedo oz. pomen</h3>
       <h3 v-else>Dodaj besedo oz. pomen</h3>
       <div class="field">
@@ -117,7 +117,8 @@ export default defineComponent({
   props: [
     'language',
     'languageKey',
-    'selectedWordId'
+    'selectedWordId',
+    'disableEditing'
   ],
   mixins: [
     requestMixin
