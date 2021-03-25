@@ -11,6 +11,11 @@
 
       <div class="label">Obstoječi pomeni</div>
       <div class="suggestions">
+        <div v-if="!existingWords?.length"
+          class="no-existing-meanings"
+        >
+          Ni obstoječih pomenov za to besedo.
+        </div>
         <div
           v-for="existingWord of existingWords"
           class="suggestion"
@@ -42,7 +47,7 @@
         </div>
       </div>
     </div>
-    <div v-if="showAddWord && (disableEditing && !word.id)" class="add-new-word">
+    <div v-if="(disableEditing && showAddWord && !selectedWord.id) || (!disableEditing && showAddWord)" class="add-new-word">
       <h3 v-if="selectedWord.id">Uredi besedo oz. pomen</h3>
       <h3 v-else>Dodaj besedo oz. pomen</h3>
       <div class="field">
@@ -160,7 +165,13 @@ export default defineComponent({
 
       // allow editing. Always edit copy, not the main word.
       this.word = JSON.parse(JSON.stringify(selectedWord));
-      this.showAddWord = true;
+
+      // only show word if selectedWord is not an empty object
+      if (selectedWord.word) {
+        this.showAddWord = true;
+      } else {
+        this.showAddWord = false;
+      }
     },
     async searchExisting(search: string) {
       this.showAddWord = false;
