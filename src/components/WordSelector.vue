@@ -165,7 +165,10 @@ export default defineComponent({
     async searchExisting(search: string) {
       this.showAddWord = false;
 
-      this.selectedWord = {} as any;
+      // ensure we clear selection when search terms change.
+      // we must also tell that to the outside world as well.
+      this.selectWord({});
+
       this.search = search;
       
       try {
