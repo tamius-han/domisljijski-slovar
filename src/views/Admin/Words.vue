@@ -150,7 +150,7 @@
                     <div class="flex flex-row flex-end">
                       <div
                         class="button small secondary"
-                        @click="editTranslation(translation)"
+                        @click="editTranslation(word)"
                       >
                         Uredi prevod
                       </div>
@@ -369,6 +369,7 @@ export default defineComponent({
                 id: d.tr_id,
                 translationNotes: d.tr_notes,
                 translationRfc: d.tr_rfc,
+                translationPriority: d.tr_translation_priority,
                 word_id: d.sl_id,
                 word: d.sl_word,
                 word_m: d.sl_word_m,
@@ -406,6 +407,7 @@ export default defineComponent({
                 id: d.tr_id,
                 translationNotes: d.tr_notes,
                 translationRfc: d.tr_rfc,
+                translationPriority: d.tr_translation_priority,
                 word_id: d.en_id,
                 word: d.en_word,
                 word_m: d.en_word_m,
@@ -445,11 +447,18 @@ export default defineComponent({
       setTimeout(() => this.notifications = this.notifications.filter(x => x.id !== id), 5000);
     },
 
+    /**
+     * Opens a form and closes all others. This also clears selectedWord, selectedTranslationWord and translationData.
+     */
     openForm(form: 'addWord' | 'editWord' | 'addTranslation' | 'editTranslation') {
       this.closeForms();
       this.visibleForms[form] = true;
     },
-    closeForms() {
+
+    /**
+     * Closes all forms and clears their data
+     */
+    closeForms(preserveData = false) {
       for (const k in this.visibleForms) {
         this.visibleForms[k] = false;
       }
@@ -458,6 +467,10 @@ export default defineComponent({
       this.selectedTranslationWord = undefined;
       this.translationData = {};
     },
+
+    /**
+     * Select current word for editing
+     */
     selectWord(word: any) {
       console.info('selecting a word:', word);
       this.selectedWord = word;
@@ -487,8 +500,8 @@ export default defineComponent({
      * Selects a source word and opens 'add translation' dialog
      */
     addTranslationForWord(word: any) {
-      this.selectWord(word);
       this.openForm('addTranslation');
+      this.selectWord(word);
     },
     
     /**
@@ -533,9 +546,16 @@ export default defineComponent({
      * Selects existing translation for update
      */
     editTranslation(translation: any) {
-      this.translationData = translation;
-
+      console.log('editing translation:', translation)
       this.openForm('editTranslation');
+
+      this.translationData = {
+        id: translation.id,
+        notes: translation.translationNotes,
+        rfc: translation.translationRfc !== 0,
+        priority: translation.translationPriority
+      };
+
     },
 
     /**
@@ -563,7 +583,7 @@ export default defineComponent({
         this.closeForms();
         this.refreshData();
       } catch (e) {
-        console.error('Deleting translation failed. Error:', e);
+        console.error('Updating translation failed. Error:', e);
       }
     },
 
