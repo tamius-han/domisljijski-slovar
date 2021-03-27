@@ -353,48 +353,14 @@ export default defineComponent({
 
       if (lang === 'en') {
         for (const d of data) {
-          const word = {
-            langFlag: '🇬🇧',
-            langKey: 'en',
-            id: +d.en_id,
-            word: d.en_word,
-            word_m: d.en_word_m,
-            word_f: d.en_word_f,
-            word_plural: d.en_word_plural,
-            rfc: d.en_rfc,
-            description: d.en_description,
-            notes: d.en_notes,
-            translations: [
-              {
-                id: +d.tr_id,
-                translationNotes: d.tr_notes,
-                translationRfc: d.tr_rfc,
-                translationPriority: +d.tr_translation_priority,
-                word_id: +d.sl_id,
-                word: d.sl_word,
-                word_m: d.sl_word_m,
-                word_f: d.sl_word_f,
-                word_plural: d.sl_word_plural,
-                rfc: d.sl_rfc,
-                description: d.sl_description,
-                notes: d.sl_notes,
-              }
-            ]
-          };
-
-          const existing = processed.find(x => x.id === word.id);
-          if (existing) {
-            existing.translations.push(word.translations[0]);
-          } else {
-            processed.push(word);
-          }
-        }
-      } else {
-        for (const d of data) {
-          const word = {
-            langFlag: '🇸🇮',
-            langKey: 'sl',
-            id: +d.sl_id,
+          const existing = processed.find(x => x.id === +d.en_id);
+         
+          const translation = {
+            id: +d.tr_id,
+            translationNotes: d.tr_notes,
+            translationRfc: d.tr_rfc,
+            translationPriority: +d.tr_translation_priority,
+            word_id: +d.sl_id,
             word: d.sl_word,
             word_m: d.sl_word_m,
             word_f: d.sl_word_f,
@@ -402,28 +368,72 @@ export default defineComponent({
             rfc: d.sl_rfc,
             description: d.sl_description,
             notes: d.sl_notes,
-            translations: [
-              {
-                id: +d.tr_id,
-                translationNotes: d.tr_notes,
-                translationRfc: d.tr_rfc,
-                translationPriority: +d.tr_translation_priority,
-                word_id: +d.en_id,
-                word: d.en_word,
-                word_m: d.en_word_m,
-                word_f: d.en_word_f,
-                word_plural: d.en_word_plural,
-                rfc: d.en_rfc,
-                description: d.en_description,
-                notes: d.en_notes,
-              }
-            ]
           };
 
-          const existing = processed.find(x => x.id === word.id);
           if (existing) {
-            existing.translations.push(word.translations[0]);
+            if (translation.id) {
+              existing.translations.push(translation);
+            }
           } else {
+            const word = {
+              langFlag: '🇬🇧',
+              langKey: 'en',
+              id: +d.en_id,
+              word: d.en_word,
+              word_m: d.en_word_m,
+              word_f: d.en_word_f,
+              word_plural: d.en_word_plural,
+              rfc: d.en_rfc,
+              description: d.en_description,
+              notes: d.en_notes,
+              translations: [] as any
+            };
+            if (translation.id) {
+              word.translations.push(translation);
+            }
+            processed.push(word);
+          }
+        }
+      } else {
+        for (const d of data) {
+          const existing = processed.find(x => x.id === d.sl_id);
+          
+          const translation = {
+            id: +d.tr_id,
+            translationNotes: d.tr_notes,
+            translationRfc: d.tr_rfc,
+            translationPriority: +d.tr_translation_priority,
+            word_id: +d.en_id,
+            word: d.en_word,
+            word_m: d.en_word_m,
+            word_f: d.en_word_f,
+            word_plural: d.en_word_plural,
+            rfc: d.en_rfc,
+            description: d.en_description,
+            notes: d.en_notes,
+          };
+
+          if (existing) {
+            if (translation.id) {
+              existing.translations.push(translation);
+            }
+          } else {
+            const word = {
+              langFlag: '🇸🇮',
+              langKey: 'sl',
+              id: +d.sl_id,
+              word: d.sl_word,
+              word_m: d.sl_word_m,
+              word_f: d.sl_word_f,
+              word_plural: d.sl_word_plural,
+              rfc: d.sl_rfc,
+              description: d.sl_description,
+              notes: d.sl_notes,
+              translations: [ ] as any
+            }
+            if (translation.id) {
+              word.translations.push(translation);
+            }
             processed.push(word);
           }
         }
