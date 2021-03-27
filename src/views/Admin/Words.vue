@@ -156,7 +156,7 @@
                       </div>
                       <div 
                         class="button small"
-                        @click="deleteTranslation()"
+                        @click="deleteTranslation(key, word.id)"
                       >
                         Odstrani prevod
                       </div>
@@ -339,7 +339,7 @@ export default defineComponent({
       this.getResults(this.searchString);
     },
     async getResults(search: string) {
-      const res = await this.get(`/translate/?s=${search}`);
+      const res = await this.get(`/translate/?s=${search}&wordlistMode=1`);
 
       this.hits = [
         ...this.unflatten(res.data.en2si, 'en'),
@@ -366,11 +366,11 @@ export default defineComponent({
             notes: d.en_notes,
             translations: [
               {
-                id: d.tr_id,
+                id: +d.tr_id,
                 translationNotes: d.tr_notes,
                 translationRfc: d.tr_rfc,
-                translationPriority: d.tr_translation_priority,
-                word_id: d.sl_id,
+                translationPriority: +d.tr_translation_priority,
+                word_id: +d.sl_id,
                 word: d.sl_word,
                 word_m: d.sl_word_m,
                 word_f: d.sl_word_f,
@@ -404,11 +404,11 @@ export default defineComponent({
             notes: d.sl_notes,
             translations: [
               {
-                id: d.tr_id,
+                id: +d.tr_id,
                 translationNotes: d.tr_notes,
                 translationRfc: d.tr_rfc,
-                translationPriority: d.tr_translation_priority,
-                word_id: d.en_id,
+                translationPriority: +d.tr_translation_priority,
+                word_id: +d.en_id,
                 word: d.en_word,
                 word_m: d.en_word_m,
                 word_f: d.en_word_f,
@@ -643,8 +643,27 @@ export default defineComponent({
           throw res.data;
         }
 
-        // remove from the list of translations on successful delete
-        this.hits[hitIndex].translations = this.hits[hitIndex].translations.filter( (x: any) => x.id !== id);
+        // remove from the list of translations on successful delete.
+        // note that a translation can appear TWICE on the current page,
+        // which means we need to do up to two removals.
+        const translationIndex = this.hits[hitIndex].translations.findIndex( (x: any) => x.id == id);
+        if (translationIndex === -1) {
+          // this shouldn't ever happen, but we wrote our backend in PHP ... not trustworthy
+          return;
+        }
+        const removedTranslation = this.hits[hitIndex].translations.splice(translationIndex, 1)[0];
+
+        // due to pagination, it's not certain that the other word exists. It's completely
+        // possible the following produces an undefined:
+        const otherWord = this.hits.find(x => x.id == removedTranslation?.word_id);
+        if (otherWord) {
+          const translationIndex2 = otherWord.translations.findIndex( (x: any) => x.id == id);
+          if (translationIndex2 === -1) {
+            // this shouldn't ever happen, but we wrote our backend in PHP ... not trustworthy
+            return;
+          }
+          otherWord.translations.splice(translationIndex2, 1);
+        }
 
         // force refresh the ugly way
         this.hits = [...this.hits];
