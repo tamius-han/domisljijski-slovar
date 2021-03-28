@@ -118,16 +118,18 @@ export default defineComponent({
           this.word.id = null;
         }
 
+        const langKey = this.languageKey ?? this.selectedLanguage;
+
         const res = await this.post(
           `/words/`,
           {
             ... this.word,
-            lang: this.languageKey ?? this.selectedLanguage
+            lang: langKey
           }
         );
 
         // emit updated word
-        this.$emit('updated', res.data);
+        this.$emit('updated', {langKey, ...res.data});
       } catch (e) {
         console.error('Error while adding or updating word:', e);
       }
