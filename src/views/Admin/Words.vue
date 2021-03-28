@@ -102,7 +102,7 @@
                     <div 
                       v-if="!hit.translations?.length"
                       class="button small"
-                      @click="deleteWord(word)"
+                      @click="deleteWord(hit)"
                     >
                       Odstrani
                     </div>
@@ -683,13 +683,13 @@ export default defineComponent({
     },
     //#endregion
 
-    async deleteWord(wordId: any, languageKey: string) {
+    async deleteWord(word: any) {
       try {
         const res = await this.delete(
           `/words/`,
           {
-            id: wordId,
-            lang: languageKey
+            id: word.id,
+            lang: word.langKey
           }
         );
         if (res.data.error) {
@@ -697,7 +697,7 @@ export default defineComponent({
         }
 
         // remove from the wordlist on successful delete
-        this.hits = this.hits.filter( (x: any) => x.id !== wordId);
+        this.hits = this.hits.filter( (x: any) => x.id !== word.id);
       } catch (e) {
         console.error('Deleting word failed. Error:', e);
       }
