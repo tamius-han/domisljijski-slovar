@@ -98,7 +98,6 @@
                     >
                       Uredi
                     </div>
-                    {{hit.translations?.length}}, cond: {{!hit.translations?.length}}
                     <div 
                       v-if="!hit.translations?.length"
                       class="button small"
