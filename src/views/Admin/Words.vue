@@ -66,6 +66,7 @@
               <div v-for="(hit, key) of hits"
                   :key="key"
                   class="item"
+                  :class="{'selected': selectedWord?.id === hit.id}"
               >
 
                 <!-- #region source word header -->
@@ -115,6 +116,7 @@
                   <div v-for="(word, index) of hit.translations" 
                       :key="index"
                       class="translation"
+                      :class="{'selected': selectedTranslation?.id === word.id}"
                   >
                     <div class="word">
                       <span class="word-number">{{index + 1}}. </span> 
@@ -149,7 +151,7 @@
                     <div class="flex flex-row flex-end">
                       <div
                         class="button small secondary"
-                        @click="editTranslation(word)"
+                        @click="editTranslation(hit, word)"
                       >
                         Uredi prevod
                       </div>
@@ -224,7 +226,7 @@
               <word-selector
                 :languageKey="selectedWord.langKey === 'en' ? 'sl' : 'en'"
                 :disableEditing="true"
-                @change="selectTransationWord($event)"
+                @change="selectTranslationWord($event)"
               ></word-selector>
               <div class="field">
                 <div class="field-label">
@@ -302,6 +304,7 @@ export default defineComponent({
     searchString: string,
     visibleForms: {[x: string]: boolean},
     selectedWord?: any,
+    selectedTranslation?: any,
     selectedTranslationWord?: any,
     translationData: any,
     notifications: any[],
@@ -316,6 +319,7 @@ export default defineComponent({
         editTranslation: false as boolean,
       },
       selectedWord: undefined,
+      selectedTranslation: undefined,
       selectedTranslationWord: undefined,
       translationData: {},
       notifications: [],
@@ -474,6 +478,7 @@ export default defineComponent({
 
       // also unset some of the things
       this.selectedTranslationWord = undefined;
+      this.selectedTranslation = undefined;
       this.translationData = {};
     },
 
@@ -516,9 +521,16 @@ export default defineComponent({
     /**
      * Sets the word that we'll use for translation.
      */
-    selectTransationWord(word: any) {
+    selectTranslationWord(word: any) {
       console.log("selecting translation word:", word);
       this.selectedTranslationWord = word || {};
+    },
+
+    /**
+     * Selects currently selected translation
+     */
+    selectTranslation(translation: any) {
+      this.selectedTranslation = translation;
     },
 
     /**
@@ -554,7 +566,7 @@ export default defineComponent({
     /**
      * Selects existing translation for update
      */
-    editTranslation(translation: any) {
+    editTranslation(word: any, translation: any) {
       console.log('editing translation:', translation)
       this.openForm('editTranslation');
 
@@ -564,6 +576,9 @@ export default defineComponent({
         rfc: translation.translationRfc !== 0,
         priority: translation.translationPriority
       };
+
+      this.selectWord(word);
+      this.selectTranslation(translation);
 
     },
 
@@ -710,17 +725,6 @@ b {
   color: #000;
 }
 
-.item {
-  .source {
-    background-color: rgba(#ffaa66, 0.5);
-
-    .flag {
-      font-size: 1.5rem;
-      margin-right: 0.5rem;
-    }
-  }
-}
-
 .button {
   &.small {
     padding: 0.25rem 0.5rem;
@@ -734,7 +738,7 @@ b {
   }
 
   &.secondary {
-    background-color: transparent;
+    background-color: #fbf9f0;
     color: #382a1e;
 
     &:hover {

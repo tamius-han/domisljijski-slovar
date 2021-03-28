@@ -87,7 +87,7 @@
 @import url('./colors.scss');
 
 $primary-text: rgb(172, 103, 48);
-
+$primary-bg: #382a1e;
 
 html, body {
   font-family: 'Josefin Sans', sans-serif;
@@ -214,13 +214,52 @@ h2 {
   font-family: 'Vollkorn SC';
 }
 
+.item.selected {
+
+  .source, .translation.selected  {
+    background-color: $primary-bg;
+    color: #ffbc8fde;
+  }
+
+  .translation-list {
+    background-color: #ffbc8fde;
+  }
+
+  .button.secondary {
+    background-color: #fbf9f0;
+
+    &:hover {
+      background-color: #ffbc8fde;
+    }
+  }
+}
+
 .item {
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
 
-  padding: 0.5rem;
+  // padding: 0.5rem;
 
   border: 1px solid #fa6;
+
+  .source, .translation-list {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .translation-list {
+    padding-top: 0.5rem;
+    padding-bottom: 1rem;
+  }
+
+  .source {
+    background-color: rgba(#ffaa66, 0.5);
+
+    .flag {
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+    }
+  }
 }
 
 .translation:not(:last-child) {
