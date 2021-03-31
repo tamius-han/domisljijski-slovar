@@ -127,11 +127,15 @@ export default defineComponent({
             lang: langKey
           }
         );
+        if (res.data.error) {
+          throw res.data;
+        }
 
         // emit updated word
         this.$emit('updated', {langKey, ...res.data});
       } catch (e) {
         console.error('Error while adding or updating word:', e);
+        this.$emit('error', e);
       }
     }
   }
