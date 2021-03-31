@@ -96,7 +96,7 @@ export default defineComponent({
         );
 
         window.localStorage.setItem('userToken', res.data);
-        this.$router.push('/durin/translation');
+        this.$router.push('/durin/words');
       } catch (e) {
         console.log('Error while logging in:', e);
       }
