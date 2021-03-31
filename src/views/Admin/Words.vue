@@ -39,7 +39,7 @@
             </div>
             <div 
               v-else
-              class="button"
+              class="button secondary"
               @click="closeForms()"
             >
               Prekliči dodajanje
@@ -48,21 +48,42 @@
               <word-editor
                 :word="{}"
                 @updated="wordAdded($event)"
+                @error="wordAddedError($event)"
               ></word-editor>
             </div>
           </div>
-
-
 
           <div v-if="searchString" class="search-term">
             Iskanje: <i>{{searchString}}</i>
           </div>
 
+          <div class="notification-banner">
+            <div
+              v-for="notification of notifications"
+              :key="notification.id"
+              :class="{
+                'warning': notification.level === 'warning',
+                'error': notification.level === 'error',
+                'info': notification.level === 'info',
+                'success': notification.level === 'success',
+              }"
+            >
+              {{notification.text}}
+              <div v-if="notification.extras" class="notification-extras">
+                <pre>{{notification.extras}}</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="page">
+        <div class="wide-content">
 
           <!-- RESULT LIST -->
 
           <div class="flex flex-row">
-            <div class="flex flex-column">
+            <div class="flex flex-column half-page">
               <div v-for="(hit, key) of hits"
                   :key="key"
                   class="item"
@@ -95,7 +116,7 @@
                   <div class="flex-nogrow flex-noshrink flex flex-row">
                     <div 
                       class="button small secondary"
-                      @click="openForm('editWord')"
+                      @click="editWord(hit)"
                     >
                       Uredi
                     </div>
@@ -174,8 +195,10 @@
               </div>
             </div>
 
+            <div class="vspacer"></div>
+
             <!-- #region translation edit -->
-            <div v-if="visibleForms.editTranslation" class="edit-box">
+            <div v-if="visibleForms.editTranslation" class="edit-box half-page">
               <h2>Uredi prevod</h2>
               <div class="field">
                 <div class="field-label">
@@ -200,12 +223,18 @@
               </div>
               <div class="button-wrapper">
                 <div class="button" @click="updateTranslation()">Shrani prevod</div>
+                <div 
+                  class="button secondary"
+                  @click="closeForms()"
+                >
+                  Prekliči
+                </div>
               </div>
             </div>
             <!-- #endregion translation edit -->
 
             <!-- #region translation add -->
-            <div  v-if="visibleForms.addTranslation" class="edit-box">
+            <div  v-if="visibleForms.addTranslation" class="edit-box half-page">
               <h2>Dodaj prevod</h2>
               <p>
                 Dodajanje prevoda za besedo: <b>{{selectedWord?.word ?? '<izberi>'}}</b> <i>{{ 
@@ -252,21 +281,35 @@
               <div class="button-wrapper">
                 <div
                   class="button"
-                  :class="{'disabled': !translationData?.priority || !this.selectedTranslationWord?.id}"
+                  :class="{'disabled': !this.selectedTranslationWord?.id}"
                   @click="createTranslation()"
                 >
                   Shrani prevod
+                </div>
+                <div 
+                  class="button secondary"
+                  @click="closeForms()"
+                >
+                  Prekliči
                 </div>
               </div>
             </div>
             <!-- #endregion translation add -->
 
             <!-- word edit -->
-            <div  v-if="visibleForms.editWord" class="edit-box">
+            <div  v-if="visibleForms.editWord" class="edit-box half-page">
               <h2>Uredi besedo</h2>
               <word-editor
-                :word="{}"
+                :word="selectedWord"
+                @updated="wordUpdated($event)"
+                @error="wordUpdatedError($event)"
               ></word-editor>
+              <div 
+                class="button secondary"
+                @click="closeForms()"
+              >
+                Prekliči
+              </div>
             </div>
           </div>
         </div>
@@ -276,7 +319,7 @@
       <div class="page">
         <div class="content">
           <a href="https://tamius.net">tamius.net</a> :: domišljijski slovarček. Vidi me na <a href="https://github.com/tamius-han/domisljijski-slovar" target="_blank">github</a>.<br/>
-          Posebne zahvale: <a href="https://reddit.com/user/Sneikss">/u/Sneikss</a>
+          Ali pa rajši ne, ker je koda precej slaba.
         </div>
       </div>
     </div>
@@ -288,7 +331,20 @@ import WordSelector from '@/components/WordSelector.vue';
 import WordEditor from '@/components/WordEditor.vue';
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
-import Dictionary from '../../dict/dict';
+
+/**
+ * DONE & working:
+ * 
+ *  - adding words
+ *  - adding translations
+ *  - deleting translations
+ *  - deleting words
+ * 
+ * TODO:
+ *  - edit word
+ *  - edit translation
+ *  - auto add translation priority (requires BE)
+ */
 
 export default defineComponent({
   name: 'Domišljijski slovarček',
@@ -395,14 +451,14 @@ export default defineComponent({
           const translation = {
             id: +d.tr_id,
             translationNotes: d.tr_notes,
-            translationRfc: d.tr_rfc,
+            translationRfc: !!(+d.tr_rfc),
             translationPriority: +d.tr_translation_priority,
             word_id: +d.sl_id,
             word: d.sl_word,
             word_m: d.sl_word_m,
             word_f: d.sl_word_f,
             word_plural: d.sl_word_plural,
-            rfc: d.sl_rfc,
+            rfc: !!(+d.sl_rfc),
             description: d.sl_description,
             notes: d.sl_notes,
           };
@@ -420,7 +476,7 @@ export default defineComponent({
               word_m: d.en_word_m,
               word_f: d.en_word_f,
               word_plural: d.en_word_plural,
-              rfc: d.en_rfc,
+              rfc: !!(+d.en_rfc),
               description: d.en_description,
               notes: d.en_notes,
               translations: [] as any
@@ -438,14 +494,14 @@ export default defineComponent({
           const translation = {
             id: +d.tr_id,
             translationNotes: d.tr_notes,
-            translationRfc: d.tr_rfc,
+            translationRfc: !!(+d.tr_rfc),
             translationPriority: +d.tr_translation_priority,
             word_id: +d.en_id,
             word: d.en_word,
             word_m: d.en_word_m,
             word_f: d.en_word_f,
             word_plural: d.en_word_plural,
-            rfc: d.en_rfc,
+            rfc: !!(+d.en_rfc),
             description: d.en_description,
             notes: d.en_notes,
           };
@@ -463,7 +519,7 @@ export default defineComponent({
               word_m: d.sl_word_m,
               word_f: d.sl_word_f,
               word_plural: d.sl_word_plural,
-              rfc: d.sl_rfc,
+              rfc: !!(+d.sl_rfc),
               description: d.sl_description,
               notes: d.sl_notes,
               translations: [ ] as any
@@ -482,12 +538,13 @@ export default defineComponent({
       this.hits = [];
     },
 
-    showNotification(notificationText: string, level: 'error' | 'success' | 'warning' | 'info') {
+    showNotification(notificationText: string, level: 'error' | 'success' | 'warning' | 'info', extras?: any) {
       const id = Date.now();
 
       this.notifications.push({
         level,
         text: notificationText,
+        extras: extras ? JSON.stringify(extras, null, 2) : undefined,
         id
       });
 
@@ -531,15 +588,33 @@ export default defineComponent({
     wordAdded(word: any) {
       this.hits = [word];
       this.selectWord(word);
-    },
 
+      this.showNotification('Beseda dodana.', 'success');
+    },
+    wordAddedError(error: any) {
+      this.showNotification('Napaka pri dodajanju besede.', 'error', error);
+    },
+    //#endregion
+    //#region edit word
+    editWord(word: any) {
+      this.selectWord(word);
+      this.openForm('editWord')
+    },
     /**
      * Triggers when word was updated from the "add word" dialogue at the top of the page.
      */
     wordUpdated(word: any) {
+      console.log('word updated!', word);
+
       const index = this.hits.findIndex(x => x.id === word.id);
       this.hits[index] = word;
+
+      this.showNotification('Beseda posodobljena.', 'success');
+
       this.selectWord(word);
+    },
+    wordUpdatedError(error: any) {
+      this.showNotification('Napaka pri urejanju besede.', 'error', error);
     },
     //#endregion
 
@@ -578,7 +653,7 @@ export default defineComponent({
             enWordId: this.selectedWord.langKey === 'en' ? this.selectedWord.id : this.selectedTranslationWord.id,
             slWordId: this.selectedWord.langKey === 'en' ? this.selectedTranslationWord.id : this.selectedWord.id,
             priority: this.translationData.priority,
-            rfc: this.translationData.rfc,
+            rfc: !!(+this.translationData.rfc),
             notes: this.translationData.notes
           }
         );
@@ -589,11 +664,14 @@ export default defineComponent({
         // force refresh the ugly way
         this.hits = [...this.hits];
 
+        this.showNotification('Prevod dodan.', 'success');
+
         // close everything
         this.closeForms();
         this.refreshData();
       } catch (e) {
         console.error('Deleting translation failed. Error:', e);
+        this.showNotification('Napaka pri dodajanju prevoda.', 'error', e);
       }
     },
 
@@ -601,19 +679,17 @@ export default defineComponent({
      * Selects existing translation for update
      */
     editTranslation(word: any, translation: any) {
-      console.log('editing translation:', translation)
       this.openForm('editTranslation');
 
       this.translationData = {
         id: translation.id,
         notes: translation.translationNotes,
-        rfc: translation.translationRfc !== 0,
+        rfc: !!+translation.translationRfc,
         priority: translation.translationPriority
       };
 
       this.selectWord(word);
       this.selectTranslation(translation);
-
     },
 
     /**
@@ -626,7 +702,7 @@ export default defineComponent({
           {
             id: this.translationData.id,
             priority: this.translationData.priority,
-            rfc: this.translationData.rfc,
+            rfc: !!+this.translationData.rfc,
             notes: this.translationData.notes
           }
         );
@@ -640,8 +716,11 @@ export default defineComponent({
         // close everything
         this.closeForms();
         this.refreshData();
+
+        this.showNotification('Prevod posodobljen.', 'success');
       } catch (e) {
         console.error('Updating translation failed. Error:', e);
+        this.showNotification('Napaka pri posodabljanju prevoda.', 'error', e);
       }
     },
 
@@ -723,10 +802,13 @@ export default defineComponent({
           otherWord.translations.splice(translationIndex2, 1);
         }
 
+        this.showNotification('Prevod izbrisan.', 'success');
+
         // force refresh the ugly way
         this.hits = [...this.hits];
       } catch (e) {
         console.error('Deleting translation failed. Error:', e);
+        this.showNotification('Napaka pri brisanju prevoda.', 'error', e);
       }
     },
     //#endregion
@@ -744,10 +826,13 @@ export default defineComponent({
           throw res.data;
         }
 
+        this.showNotification('Beseda izbrisana.', 'success');
+
         // remove from the wordlist on successful delete
         this.hits = this.hits.filter( (x: any) => x.id !== word.id);
       } catch (e) {
         console.error('Deleting word failed. Error:', e);
+        this.showNotification('Napaka pri brisanju besede.', 'error', e);
       }
     }
   }
@@ -781,6 +866,25 @@ b {
       transition: background-color 0.25s ease, color 0.25s ease;
     }
   }
+}
+
+.wide-content {
+  display: inline-block;
+  width: 100%;
+  max-width: 96rem;
+  padding: 1rem;
+  text-align: left;
+}
+
+
+.half-page {
+  width: 49%;
+}
+.half-page:nth-child(odd) {
+  padding-left: 1rem;
+}
+.half-page:nth-child(odd) {
+  padding-right: 1rem;
 }
 
 </style>
