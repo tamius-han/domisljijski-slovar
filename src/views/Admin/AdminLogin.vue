@@ -45,16 +45,39 @@ export default defineComponent({
       auth2: undefined
     }
   },
-  mounted() {
+  async mounted() {
     (window as any).gapi.load("auth2", () => {
       this.auth2 = (window as any).gapi.auth2.init({ client_id: env.GOOGLE_CLIENT_ID, scope: 'email' });
     });
 
     if (window.localStorage.getItem('userToken')) {
-      this.$router.push('/durin/translation');
+      let token = this.parseJwt(window.localStorage.getItem('userToken'));
+
+      if (token.exp * 1000 < Date.now()) {
+        return;
+      }
+      if (token.exp * 1000 < (Date.now() - 72 * 3600000)) {
+        const res = await axios.get(
+          `${env.ADMIN_API_BASE}/auth/refresh`
+        )
+
+        token = res.data;
+        window.localStorage.setItem('userToken', token);
+      }
+
+      this.$router.push('/durin/words');
     }
   },
   methods: {
+    parseJwt (token: any) {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      return JSON.parse(jsonPayload);
+    },
     async signIn() {
       const googleUser = await (this.auth2 as any).signIn({
         scope: 'email'

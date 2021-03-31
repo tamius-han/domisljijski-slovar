@@ -325,7 +325,41 @@ export default defineComponent({
       notifications: [],
     }
   },
+  mounted() {
+    this.tokenRefresh();
+  },
   methods: {
+    //#region auth stuff
+    parseJwt (token: any) {
+      var base64Url = token.split('.')[1];
+      var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      return JSON.parse(jsonPayload);
+    },
+    async tokenRefresh() {
+      let token = this.parseJwt(window.localStorage.getItem('userToken'));
+
+      // logged out users go to login page
+      if (token.exp * 1000 < Date.now()) {
+        this.$router.push('/durin');
+      }
+      if (token.exp * 1000 < (Date.now() - 72 * 3600000)) {
+        const res = await this.get(
+          `/auth/refresh/`
+        );
+
+        token = res.data;
+        window.localStorage.setItem('userToken', token);
+
+        // check again in like 5 min
+        setTimeout(() => this.tokenRefresh(), 300000);
+      }
+    },
+    //#endregion
+
     showAll() {
       (this.hits as any) = this.wordlist;
     },
