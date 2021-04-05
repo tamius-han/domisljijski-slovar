@@ -11,14 +11,15 @@
                   Kdo in kaj
                 </h1>
                 <p>
-                  V zadnjem času je priljubljenost domišljijskih del rahlo narasla, na račun iz Anglije ter (predvsem) Amerike uvoženih knjig, filmov in iger. Skupaj z njim je prišla ena celgafuka [TODO: povezava na 'alot']
-                  besed, za katere nekega požegnanega prevoda pač ni. To je rahlo škoda, ker je slovenščina v bistvu kar lep jezik, ki ga pri igranju temnic in zmajev ne gre kaliti z grdimi, iz angleščine sposojenimi besedami.
-                  Tako smo se odločili, da gremo v prostem času "tako za foro" prevajati stvari v slovenščino.
+                  V zadnjem času je priljubljenost domišljijskih del rahlo narasla, na račun iz Anglije ter (predvsem) Amerike uvoženih knjig, filmov in iger. Skupaj z njim je prišla ena 
+                  <a href="http://hyperboleandahalf.blogspot.com/2010/04/alot-is-better-than-you-at-everything.html">celgafuka</a> besed, za katere nekega požegnanega prevoda pač ni. To
+                  je rahlo škoda, ker je slovenščina v bistvu kar lep jezik, ki ga pri igranju temnic in zmajev ne gre kaliti z grdimi, iz angleščine sposojenimi besedami. Tako smo se
+                  odločili, da gremo v prostem času "tako za foro" prevajati stvari v slovenščino.
                 </p>
                 <p>
-                  Ta stran ni kaj preveč uradna stvar, temveč je bolj 'konjiček' — bolj ali manj 'dva modela v garaži' brez kakšne formalne izobrazbe v jezikoslovju in brez kakšne posebne avtoritete na tem področju. Tako ta
-                  stran mogoče ni ravno najboljši vir za poklicne prevajalce (čeprav se ne bomo prav nič pritoževali, če se kakšne stvari iz tega slovarčka znajdejo v divjini), ampak za petkovo igro temnic in zmajev bo pač
-                  verjetno zadosti.   
+                  Ta stran ni kaj preveč uradna stvar, temveč je bolj 'konjiček' — bolj ali manj 'dva modela v garaži' brez kakšne formalne izobrazbe v jezikoslovju in brez kakšne
+                  posebne avtoritete na tem področju. Tako ta stran mogoče ni ravno najboljši vir za poklicne prevajalce (čeprav se ne bomo prav nič pritoževali, če se kakšne stvari
+                  iz tega slovarčka znajdejo v divjini), ampak za petkovo igro temnic in zmajev bo pač verjetno zadosti.   
                 </p>
                 <p>&nbsp;</p>
                 <p>
