@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Slovarcek from '../views/Slovarcek.vue';
+import Brskalnik from '../views/Brskalnik.vue';
 import AdminLogin from '../views/Admin/AdminLogin.vue';
 import Translations from '../views/Admin/Translations.vue';
 import NotAuthorized from '../views/Oopsies/NotAuthorized.vue';
@@ -10,6 +11,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Domišljijski slovarček',
     component: Slovarcek
+  },
+  {
+    path: '/brskaj',
+    name: 'Domišljijski slovarček | Brskaj',
+    component: Brskalnik
   },
   {
     path: '/durin',
