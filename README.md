@@ -1,4 +1,14 @@
-# fantazijski-slovar
+# Domišljijski slovarček
+
+Ta repozitorij vsebuje zgolj kodo za spletno stran. Domišljijski slovarček (fantazijski slovarček) je dosegljiv na spodnjih povezavah:
+
+* https://domišljijski-slovarček.tamius.net/
+* https://domisljijski-slovarcek.tamius.net/
+
+Uporabljamo oba naslova, ker nekateri programi (hmm Discord) ne marajo šumnikov v povezavah preveč.
+
+
+# Stvari za programerje
 
 ## Project setup
 ```
