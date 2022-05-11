@@ -3,13 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "npm run serve",
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "build": "npm run sitemap; vue-cli-service build",
+    "lint": "vue-cli-service lint",
+    "sitemap": "vue-cli-service sitemap"
   },
   "dependencies": {
     "axios": "^0.21.4",
     "core-js": "^3.22.5",
+    "esm": "^3.2.25",
     "vue": "^3.2.33",
     "vue-debounce": "^2.6.0",
     "vue-router": "^4.0.15",
@@ -25,7 +28,8 @@
     "@vue/compiler-sfc": "^3.2.33",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
-    "typescript": "^3.9.10"
+    "typescript": "^3.9.10",
+    "vue-cli-plugin-sitemap": "~2.3.0"
   },
   "title": "Domišljijski slovarček"
 }

@@ -6,7 +6,14 @@ import Translations from '../views/Admin/Translations.vue';
 import NotAuthorized from '../views/Oopsies/NotAuthorized.vue';
 import Words from '../views/Admin/Words.vue';
 
-const routes: Array<RouteRecordRaw> = [
+/**
+ * POMEMBNO OBVESTILO
+ *
+ * SITEMAP JE TREBA NA ROKE POPRAVIT. ČE SE KAJ PIPA V TEJ DATOTEKI,
+ * POTEM JE TREBA POPRAVITI ŠE vue.config.js KER GRETA SITEMAP PLUGIN
+ * IN TYPESCRIPT LIH TOK SKUP KOT VILINI PA ORKI
+ */
+export const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Domišljijski slovarček',
@@ -52,6 +59,6 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
 
 export default router
