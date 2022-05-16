@@ -11,7 +11,7 @@
       <div class="page">
         <div class="content">
           <h1><small>Angleško-slovenski</small><br/>domišljijski slovarček</h1>
-          
+
           <!-- SEARCH BOX -->
           <div class="flex flex-cross-center">
             <div class="searchbox center">
@@ -61,12 +61,12 @@
               </div>
 
               <div class="translation-list">
-                <div v-for="(word, index) of hit.translations" 
+                <div v-for="(word, index) of hit.translations"
                     :key="index"
                     class="translation"
                 >
                   <div class="word">
-                    <span class="word-number">{{index + 1}}. </span> 
+                    <span class="word-number">{{index + 1}}. </span>
                     <span class="word-word">{{word.word}}</span>
                     <span v-if="word.word_m || word.word_f || word.word_plural" class="gender-plural">
                       (<template v-if="word.word_m"><i>m.</i> <span class="secondary">{{word.word_m}}</span><template v-if="word.word_f || word.word_plural">; </template></template>
@@ -83,11 +83,11 @@
                   <div v-if="word.translationNotes" class="translation-notes">
                     Opombe prevoda: {{word.translationNotes}}
                   </div>
-                  
+
                   <div v-if="word.rfc || word.translationRfc">
                     Stvari v idejni fazi: {{word.rfc ? 'beseda' : ''}}{{word.rfc && word.translationRfc ? ', ' : ''}}{{word.translationRfc ? 'prevod' : ''}}.
                   </div>
-                  
+
                   <div class="">
                     <div v-if="word.rfc" class="regular">⚠️ V idejni fazi.</div>
                     <div v-if="word.via" class="via">Vkradeno od: {{word.via}}</div>
