@@ -120,8 +120,8 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
   let lastWord: Word, lastMeaningSl: Meaning, lastMeaningEn: Meaning, lastCategory: CategoryTree;
   let firstCategory = true;
 
+  // first, order results in trees. Note that categories are still a simple array
   for (const response of correctedResponses) {
-
     // word changed
     if (lastId !== response.id) {
       lastId = response.id;
@@ -214,7 +214,8 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
         parentId: response.categoryParentId,
         nameEn: response.categoryNameEn,
         nameSl: response.categoryNameSl,
-        communitySuggestion: response.categoryCommunitySuggestion
+        communitySuggestion: response.categoryCommunitySuggestion,
+        children: [],
       };
 
       lastMeaningEn!.categories.push(lastCategory);
@@ -235,6 +236,36 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
 
       lastMeaningEn!.translations!.push(translation);
       lastMeaningSl!.translations!.push(translation);
+    }
+  }
+
+  // get categories in order
+  for (const word of words) {
+    if (!word.meaningsEn || !word.meaningsSl) {
+      continue;
+    }
+    for (const meaning in word.meaningsEn) {
+      let i = 0;
+      while (i < word.meaningsEn[meaning].categories.length) {
+        if (word.meaningsEn[meaning].categories[i].parentId) {
+          const parentCategory = word.meaningsEn[meaning].categories.findIndex((x: CategoryTree) => x.id === word.meaningsEn![meaning].categories[i].parentId);
+
+          if (parentCategory === -1) {
+            // this is illegal but ok
+            i++;
+            continue;
+          }
+
+          // through the magic of pointers and reference, this updates categories in
+          // BOTH meaningsEn and meaningsSl arrays. Wild stuff, ain't it?
+          // We _do_ need to remove category from both list separately, though.
+          word.meaningsEn[meaning].categories[parentCategory].children.push(word.meaningsEn[meaning].categories[i]);
+          word.meaningsEn[meaning].categories.splice(i, 1);
+          word.meaningsSl[meaning].categories.splice(i, 1);
+        } else {
+          i++;
+        }
+      }
     }
   }
 
