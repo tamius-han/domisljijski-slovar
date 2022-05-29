@@ -115,7 +115,6 @@
 <script lang="ts">
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
-import Dictionary from '../dict/dict';
 
 export default defineComponent({
   name: 'Domišljijski slovarček',
@@ -125,7 +124,7 @@ export default defineComponent({
   data() {
     return {
       hits: new Array<any>(),
-      wordlist: Dictionary.wordlist,
+      // wordlist: Dictionary.wordlist,
       searchString: '',
     }
   },
