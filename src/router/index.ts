@@ -5,6 +5,7 @@ import AdminLogin from '../views/Admin/AdminLogin.vue';
 import Translations from '../views/Admin/Translations.vue';
 import NotAuthorized from '../views/Oopsies/NotAuthorized.vue';
 import Words from '../views/Admin/Words.vue';
+import Migration from '../views/Migration.vue';
 
 /**
  * POMEMBNO OBVESTILO
@@ -44,6 +45,11 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/oopsie/notallowed',
     name: 'ok wt',
     component: NotAuthorized
+  },
+  {
+    path: '/migration',
+    name: 'migrate shit here',
+    component: Migration
   },
   {
     path: '/about',
