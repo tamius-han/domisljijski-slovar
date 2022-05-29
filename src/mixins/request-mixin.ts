@@ -1,5 +1,7 @@
+import WordFilter from '@/types/word-filter.interface';
 import axios, { AxiosRequestConfig } from 'axios';
 import env from '../../config/env';
+import {buildQs, worldFilter2qsParams, processTranslateResponse} from '../utils/utils';
 
 const requestMixin = {
   methods: {
@@ -58,7 +60,24 @@ const requestMixin = {
           data
         }
       )
+    },
+    async getCategories() {
+      try {
+        const res = await axios.get('/categories');
+      } catch (e) {
+
+      }
+    },
+    async getTranslations(filter: WordFilter) {
+      const res = await axios.get(`/translate?${buildQs(worldFilter2qsParams(filter))}`);
+      return {
+        words: processTranslateResponse(res.data.words),
+        total: res.data.total
+      };
     }
+
+
+    // internal stuff
   }
 };
 
