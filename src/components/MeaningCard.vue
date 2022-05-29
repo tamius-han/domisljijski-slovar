@@ -63,7 +63,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import WordCardMini from './WordCardMini.vue';
-import {categoryTree2CategoryCards} from '../utils/utils.ts';
+import {categoryTree2CategoryCards} from '../utils/utils';
 
 export default defineComponent({
   components: {

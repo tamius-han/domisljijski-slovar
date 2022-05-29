@@ -39,7 +39,11 @@ export function worldFilter2qsParams(filter: WordFilter) {
     w: filter.id,
     m: filter.meaningId,
     cat: filter.categoryId,
-    lang: filter.sourceLanguage
+    lang: filter.sourceLanguage,
+
+    // pagination
+    page: filter.page,
+    limit: filter.limit
   };
 
   for (const key in qso) {

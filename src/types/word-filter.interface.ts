@@ -4,4 +4,8 @@ export default interface WordFilter {
   categoryId?: number,
   search?: string,
   sourceLanguage?: 'en' | 'sl',
+
+
+  page?: number;
+  limit?: number;
 }

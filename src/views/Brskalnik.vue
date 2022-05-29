@@ -10,7 +10,10 @@
       <div class="">
         <div class="searchbox">
           <div class="">Išči</div>
-          <input v-debounce:1s="search" :value="searchFilter.search" />
+          <div>
+            <input v-debounce:1s="search" :value="searchFilter.search" />
+          </div>
+          <a @click="showAll()">Pokaži vse</a>
         </div>
         <!-- <div class="">[todo] search box</div> -->
         <!-- <a @click="getResults()">TEST ME</a> -->
@@ -24,6 +27,16 @@
 
         <!-- seznam besed tle -->
         <div v-if="hits.length > 0" class="">
+
+          <Paginator
+            v-if="totalHits > hits.length"
+            :total="totalHits"
+            :pageSize="searchFilter.limit"
+            :currentPage="searchFilter.page"
+            :displayPages="2"
+            @changePage="changePage($event)"
+          >
+          </Paginator>
           <div class="word-list">
             <WordCard
               v-for="word in hits"
@@ -33,16 +46,16 @@
               >
             </WordCard>
           </div>
+          <Paginator
+            v-if="totalHits > hits.length"
+            :total="totalHits"
+            :pageSize="searchFilter.limit"
+            :currentPage="searchFilter.page"
+            :displayPages="2"
+            @changePage="changePage($event)"
+          >
+          </Paginator>
 
-          <!-- prejšnja/naslednja stran -->
-          <div class="">
-            <div class="button pagination">
-              Nazaj
-            </div>
-            <div class="button pagination">
-              Naprej
-            </div>
-          </div>
         </div>
         <div v-else class="">
           Ni zadetkov.
@@ -50,13 +63,7 @@
       </div>
 
     </div>
-    <div class="footer">
-      <div class="page">
-        <div class="content">
-          alan pls add footer
-        </div>
-      </div>
-    </div>
+
   </div>
 </template>
 
@@ -64,6 +71,7 @@
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
 import WordCard from '../components/WordCard.vue';
+import Paginator from '../components/Paginator.vue';
 import Word from '../types/word.interface';
 
 export default defineComponent({
@@ -73,11 +81,13 @@ export default defineComponent({
   ],
   components: {
     WordCard,
+    Paginator
   },
   data() {
     return {
       canEdit: false,
       hits: [] as Word[],
+      totalHits: 0,
       languagePriority: 'auto',
 
       searchFilter: {
@@ -85,10 +95,10 @@ export default defineComponent({
         categoryId: undefined,
         meaningId: undefined,
         id: undefined,
-        sourceLanguage: undefined
-      },
-      currentPage: 0,
-      pageSize: 50,
+        sourceLanguage: undefined,
+        page: 0,
+        limit: 24
+      }
     }
   },
   created() {
@@ -96,23 +106,35 @@ export default defineComponent({
   },
   methods: {
     showAll() {
-      (this.hits as any) = this.wordlist;
+      // clear all the filters!
+      this.searchFilter.search = '';
+      this.searchFilter.page = 0;
+      this.searchFilter.categoryId = undefined;
+      this.searchFilter.meaningId = undefined;
+      this.searchFilter.id = undefined;
+      this.searchFilter.sourceLanguage = undefined;
+
+      // bam
+      this.getResults();
     },
     search(search: string) {
       search = search.toLowerCase().trim();
       this.searchFilter.search = search;
+      this.searchFilter.page = 0;
+      this.getResults();
+    },
+    changePage(pageNumber: number) {
+      this.searchFilter.page = pageNumber;
       this.getResults();
     },
     async getResults() {
       const words = await this.getTranslations(this.searchFilter);
       console.log("hits:", words);
       this.hits = words.words;
+      this.totalHits = +words.total[0].total;
     },
     async getCategories() {
     },
-    clear() {
-      this.hits = [];
-    }
   }
 })
 </script>
