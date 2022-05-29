@@ -10,13 +10,20 @@ import WordFilter from '../types/word-filter.interface';
  * that backend actually understands
  */
 export function worldFilter2qsParams(filter: WordFilter) {
-  return {
+  const qso: any = {
     s: filter.search,
     w: filter.id,
     m: filter.meaningId,
     cat: filter.categoryId,
     lang: filter.sourceLanguage
   };
+
+  for (const key in qso) {
+    if (!qso[key]) {
+      delete qso[key];
+    }
+  }
+  return qso;
 }
 
 /**
