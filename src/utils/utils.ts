@@ -268,7 +268,7 @@ function correctTranslateResponseTypes(tr: any): TranslateResponse {
 
     // category info
     categoryId: +tr.categoryId,
-    categoryParentId: tr.translatedCategoryParentId ? +tr.categoryParentId : undefined,
+    categoryParentId: tr.categoryParentId ? +tr.categoryParentId : undefined,
     categoryCommunitySuggestion: !!(+tr.categoryCommunitySuggestion)
   };
 }
