@@ -5,6 +5,30 @@ import CategoryTree from '../types/category-tree.interface';
 import WordFilter from '../types/word-filter.interface';
 
 
+export function categoryTree2CategoryCards(categories: CategoryTree[]) {
+  const categoryChains = [];
+
+  for (const category of categories) {
+    if (category.children?.length) {
+      const childCategoryChains: any = categoryTree2CategoryCards(category.children);
+
+      for (const chain of childCategoryChains) {
+        chain.en = `${category.nameEn} » ${chain.en}`;
+        chain.sl = `${category.nameSl} » ${chain.sl}`;
+
+        categoryChains.push(chain);
+      }
+    } else {
+      categoryChains.push({
+        en: category.nameEn,
+        sl: category.nameSl
+      });
+    }
+  }
+
+  return categoryChains;
+}
+
 /**
  * Converts convenient-for-frontend WordFilter into the parameters
  * that backend actually understands

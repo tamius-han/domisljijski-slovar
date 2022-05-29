@@ -1,12 +1,52 @@
 <template>
   <div id="app">
-    <div class="page-wrapper">
-      <div class="categories">
-        <h1>Kategorije</h1>
-        <p>Brskaš lahko tudi po posameznih kategorijah. Klik na kategorijo izbere kategorijo in odstrani prejšnje kategorije iz izbire. Za izbiro več kategorij hkrati klikni v kljukca-škatlo.</p>
+    <div class="mobile-layout">
+      <div class="mobile-header">
+        <span class="title">
+          <small>Domišljijski slovarček</small><br/>
+          Brksanje
+        </span>
       </div>
-      <div class="word-list">
-        <h1>Iztočnice</h1>
+      <div class="">
+        <div class="searchbox">
+          <div class="">Išči</div>
+          <input v-debounce:1s="search" :value="searchFilter.search" />
+        </div>
+        <!-- <div class="">[todo] search box</div> -->
+        <!-- <a @click="getResults()">TEST ME</a> -->
+      </div>
+      <div class="">
+        <div class="">Vrste besed</div>
+        <div class="">Todo: list categories</div>
+      </div>
+      <div class="">
+        <h3>Zadetki iskanja</h3>
+
+        <!-- seznam besed tle -->
+        <div v-if="hits.length > 0" class="">
+          <div class="word-list">
+            <WordCard
+              v-for="word in hits"
+              :key="word.id"
+              :word="word"
+              :languagePriority="languagePriority"
+              >
+            </WordCard>
+          </div>
+
+          <!-- prejšnja/naslednja stran -->
+          <div class="">
+            <div class="button pagination">
+              Nazaj
+            </div>
+            <div class="button pagination">
+              Naprej
+            </div>
+          </div>
+        </div>
+        <div v-else class="">
+          Ni zadetkov.
+        </div>
       </div>
 
     </div>
@@ -23,17 +63,36 @@
 <script lang="ts">
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
+import WordCard from '../components/WordCard.vue';
+import Word from '../types/word.interface';
 
 export default defineComponent({
   name: 'Domišljijski slovarček | Brskanje',
   mixins: [
     requestMixin
   ],
+  components: {
+    WordCard,
+  },
   data() {
     return {
-      hits: new Array<any>(),
-      searchString: '',
+      canEdit: false,
+      hits: [] as Word[],
+      languagePriority: 'auto',
+
+      searchFilter: {
+        search: '',
+        categoryId: undefined,
+        meaningId: undefined,
+        id: undefined,
+        sourceLanguage: undefined
+      },
+      currentPage: 0,
+      pageSize: 50,
     }
+  },
+  created() {
+    this.canEdit = !!this.getAuthToken();
   },
   methods: {
     showAll() {
@@ -41,101 +100,15 @@ export default defineComponent({
     },
     search(search: string) {
       search = search.toLowerCase().trim();
-      this.searchString = search;
-      if (search == '') {
-        this.hits = [];
-        return;
-      }
-      this.getResults(search);
+      this.searchFilter.search = search;
+      this.getResults();
     },
-    async getResults(search: string) {
-      const res = await this.get(`/translate/?s=${search}`);
-
-      this.hits = [
-        ...this.unflatten(res.data.en2si, 'en'),
-        ...this.unflatten(res.data.si2en, 'sl')
-      ]
-
-      console.log("hits:", this.hits);
+    async getResults() {
+      const words = await this.getTranslations(this.searchFilter);
+      console.log("hits:", words);
+      this.hits = words.words;
     },
-    unflatten(data: any[], lang: 'en' | 'sl') {
-      const processed: any[] = [];
-
-      if (lang === 'en') {
-        for (const d of data) {
-          const word = {
-            langFlag: '🇬🇧',
-            id: +d.en_id,
-            word: d.en_word,
-            word_m: d.en_word_m,
-            word_f: d.en_word_f,
-            word_plural: d.en_word_plural,
-            rfc: d.en_rfc,
-            description: d.en_description,
-            notes: d.en_notes,
-            translations: [
-              {
-                id: d.tr_id,
-                translationNotes: d.tr_notes,
-                translationRfc: d.tr_rfc,
-                word_id: d.sl_id,
-                word: d.sl_word,
-                word_m: d.sl_word_m,
-                word_f: d.sl_word_f,
-                word_plural: d.sl_word_plural,
-                rfc: d.sl_rfc,
-                description: d.sl_description,
-                notes: d.sl_notes,
-              }
-            ]
-          };
-
-          const existing = processed.find(x => x.id === word.id);
-          if (existing) {
-            existing.translations.push(word.translations[0]);
-          } else {
-            processed.push(word);
-          }
-        }
-      } else {
-        for (const d of data) {
-          const word = {
-            langFlag: '🇸🇮',
-            id: +d.sl_id,
-            word: d.sl_word,
-            word_m: d.sl_word_m,
-            word_f: d.sl_word_f,
-            word_plural: d.sl_word_plural,
-            rfc: d.sl_rfc,
-            description: d.sl_description,
-            notes: d.sl_notes,
-            translations: [
-              {
-                id: d.tr_id,
-                translationNotes: d.tr_notes,
-                translationRfc: d.tr_rfc,
-                word_id: d.en_id,
-                word: d.en_word,
-                word_m: d.en_word_m,
-                word_f: d.en_word_f,
-                word_plural: d.en_word_plural,
-                rfc: d.en_rfc,
-                description: d.en_description,
-                notes: d.en_notes,
-              }
-            ]
-          };
-
-          const existing = processed.find(x => x.id === word.id);
-          if (existing) {
-            existing.translations.push(word.translations[0]);
-          } else {
-            processed.push(word);
-          }
-        }
-      }
-
-      return processed;
+    async getCategories() {
     },
     clear() {
       this.hits = [];
@@ -144,7 +117,18 @@ export default defineComponent({
 })
 </script>
 
-<style>
+<style lang="scss">
+.title {
+  font-family: 'Vollkorn';
+  font-size: 1.5rem;
 
+  small {
+    font-size: 0.75rem;
+  }
+}
+
+.word-list {
+  padding: 0.5rem;
+}
 
 </style>

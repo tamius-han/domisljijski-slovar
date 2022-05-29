@@ -45,13 +45,16 @@
         {{meaningSl.notes}}
       </div>
     </div>
-    <div class="categories fc">
-      <div class="primary-en">
-        TODO: parse categories
+    <div class="categories fr">
+      <div class="category fc" v-for="category in categoryCards" :key="category">
+        <div class="primary-en">
+          {{category.en}}
+        </div>
+        <div class="primary-sl">
+          {{category.sl}}
+        </div>
       </div>
-      <div class="primary-sl">
-        TODO: kategorije tle
-      </div>
+
     </div>
 
   </div>
@@ -60,6 +63,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import WordCardMini from './WordCardMini.vue';
+import {categoryTree2CategoryCards} from '../utils/utils.ts';
 
 export default defineComponent({
   components: {
@@ -70,6 +74,12 @@ export default defineComponent({
     'meaningSl',
     'languagePriority',
   ],
+  computed: {
+    categoryCards(): any {
+      console.log('categories:', this.meaningEn.categories)
+      return categoryTree2CategoryCards(this.meaningEn.categories);
+    }
+  },
   methods: {
 
   }
@@ -81,6 +91,11 @@ export default defineComponent({
 .fc {
   display: flex;
   flex-direction: column;
+}
+.fr {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .meaning {
@@ -124,6 +139,13 @@ export default defineComponent({
 .translation-list {
   margin-top: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.category {
+  background-color: rgba(250, 192, 138, 0.171);
+  color: rgb(139, 97, 60);
+  margin: 0.25rem;
+  padding: 0.25rem 0.5rem;
 }
 
 </style>
