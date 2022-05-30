@@ -228,28 +228,39 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
     // and this is where things get tricky. Category ID can be null because carelessness.
     if (lastCategoryId !== response.categoryId || !response.categoryId) {
 
-      // this is needed, because we will only process translations for the first category
-      // in order to avoid duplicating translation words
-      if (lastCategoryId === null) {
+      if (!response.categoryId) {
+        // add an invalid category and we're done
+        // there's no category to add, so ...
+        // on the bright side, we know for a fact that if the response.categoryId is null,
+        // then our translation result has only a single (non-existent) category, meaning
+        // the issue this code block is trying to solve will solve itself on its own!
+        response.categoryId = -1;
+        lastCategoryId = response.categoryId;
         firstCategory = true;
       } else {
-        firstCategory = false;
+        // this is needed, because we will only process translations for the first category
+        // in order to avoid duplicating translation words
+        if (lastCategoryId === null) {
+          firstCategory = true;
+        } else {
+          firstCategory = false;
+        }
+
+        lastCategoryId = response.categoryId;
+        lastTranslationId = null;
+
+        lastCategory = {
+          id: response.categoryId,
+          parentId: response.categoryParentId,
+          nameEn: response.categoryNameEn,
+          nameSl: response.categoryNameSl,
+          communitySuggestion: response.categoryCommunitySuggestion,
+          children: [],
+        };
+
+        lastMeaningEn!.categories.push(lastCategory);
+        lastMeaningSl!.categories.push(lastCategory);
       }
-
-      lastCategoryId = response.categoryId;
-      lastTranslationId = null;
-
-      lastCategory = {
-        id: response.categoryId,
-        parentId: response.categoryParentId,
-        nameEn: response.categoryNameEn,
-        nameSl: response.categoryNameSl,
-        communitySuggestion: response.categoryCommunitySuggestion,
-        children: [],
-      };
-
-      lastMeaningEn!.categories.push(lastCategory);
-      lastMeaningSl!.categories.push(lastCategory);
     }
 
     // translation words are the leaves and will always differ from previous run!
