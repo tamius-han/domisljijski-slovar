@@ -99,10 +99,10 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
    * Sort the responses, in this order
    *    1. word relevance high-to-low
    *    2. word a-z
-   *    3. meaning priority low-to-high
+   *    3. meaning priority high-to-low
    *    4. meaning ID
    *    5. category ID
-   *    6. translated word priority low-to-high
+   *    6. translated word priority high-to-low
    *    7. translated word a-z
    *
    */
@@ -123,7 +123,7 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
                   return 1;
                 }
               } else {
-                return a.translatedWordPriority - b.translatedWordPriority;
+                return b.translatedWordPriority - a.translatedWordPriority;
               }
             } else {
               return a.categoryId - b.categoryId;
@@ -132,7 +132,7 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
             return a.meaningId - b.meaningId;
           }
         } else {
-          return a.meaningPriority - b.meaningPriority;
+          return b.meaningPriority - a.meaningPriority;
         }
       }
     } else {
@@ -164,9 +164,9 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
         language: response.language,
         word: response.word,
         altSpellings: response.altSpellings,
-        type: response.type,
         genderExtras: parseGenderExtras(response.genderExtras),
         notes: response.notes,
+        etymology: response.etymology,
         credit: response.credit,
         communitySuggestion: response.communitySuggestion,
         meaningsEn: [],
@@ -186,6 +186,7 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
       const srcMeaning: Meaning = {
         id: response.meaningId,
         meaning: response.meaning,
+        type: response.meaningType,
         notes: response.meaningNotes,
         priority: response.meaningPriority,
         communitySuggestion: response.meaningCommunitySuggestion,
@@ -195,6 +196,7 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
       const dstMeaning: Meaning = {
         id: response.translatedMeaningId,
         meaning: response.translatedMeaning,
+        type: response.meaningType,              // meaning type is always same for both meanings!
         notes: response.translatedMeaningNotes,
         communitySuggestion: response.translatedMeaningCommunitySuggestion,
 
@@ -259,6 +261,7 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
         genderExtras: parseGenderExtras(response.translatedWordGenderExtras),
         priority: response.translatedWordPriority,
         credit: response.translatedWordCredit,
+        etymology: response.translatedWordEtymology,
         notes: response.translatedWordNotes
       };
 

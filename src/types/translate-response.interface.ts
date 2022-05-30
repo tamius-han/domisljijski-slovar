@@ -6,15 +6,16 @@ export default interface TranslateResponse {
   language: string,
   word: string,
   altSpellings?: string,
-  type: WordType,
   genderExtras?: string;
   notes?: string;
+  etymology?: string;
   credit?: string;
   communitySuggestion?: boolean;
 
   // meaning associated with the source word
   meaningId: number;
   meaning: string;
+  meaningType: WordType;
   meaningNotes?: string;
   meaningPriority: number;
   meaningCommunitySuggestion: boolean;
@@ -32,6 +33,7 @@ export default interface TranslateResponse {
   translatedWordPriority: number;
   translatedWordCredit?: string;
   translatedWordNotes?: string;
+  translatedWordEtymology?: string;
 
   // category info
   categoryId: number;
