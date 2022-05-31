@@ -28,6 +28,40 @@ export function categoryTree2CategoryCards(categories: CategoryTree[]) {
 
   return categoryChains;
 }
+/**
+ * Builds category tree from backend response
+ * @param categories
+ */
+export function buildCategoryTree(categories: CategoryTree[]) {
+  let i = 0;
+  while (i < categories.length) {
+    if (categories[i].parentId === null) {
+      i++;
+      continue;
+    }
+    buildCategoryTree_findParent(categories, categories, i);
+  }
+  return categories;
+}
+
+function buildCategoryTree_findParent(categoriesLevel: CategoryTree[], categories: CategoryTree[], itemIndex: number) {
+  for (const category of categoriesLevel) {
+    if (category.id === categories[itemIndex].parentId) {
+      if (category.children) {
+        category.children.push(categories[itemIndex]);
+      } else {
+        category.children = [categories[itemIndex]];
+      }
+
+      categories.splice(itemIndex, 1);
+      return true;
+    } else if (category.children) {
+      if (buildCategoryTree_findParent(category.children, categories, itemIndex)) {
+        return true;
+      };
+    }
+  }
+}
 
 /**
  * Converts convenient-for-frontend WordFilter into the parameters
@@ -289,20 +323,11 @@ export function processTranslateResponse(wordResponse: TranslateResponse[], sear
     for (const meaning in word.meaningsEn) {
       let i = 0;
       while (i < word.meaningsEn[meaning].categories.length) {
-        if (word.meaningsEn[meaning].categories[i].parentId) {
-          const parentCategory = word.meaningsEn[meaning].categories.findIndex((x: CategoryTree) => x.id === word.meaningsEn![meaning].categories[i].parentId);
+        if (word.meaningsEn[meaning].categories[i].parentId !== null) {
+          buildCategoryTree_findParent(word.meaningsEn[meaning].categories, word.meaningsEn[meaning].categories, i)
 
-          if (parentCategory === -1) {
-            // this is illegal but ok
-            i++;
-            continue;
-          }
-
-          // through the magic of pointers and reference, this updates categories in
-          // BOTH meaningsEn and meaningsSl arrays. Wild stuff, ain't it?
-          // We _do_ need to remove category from both list separately, though.
-          word.meaningsEn[meaning].categories[parentCategory].children.push(word.meaningsEn[meaning].categories[i]);
-          word.meaningsEn[meaning].categories.splice(i, 1);
+          // through the magic of pointers, the item will be re-parented in meaningsSl[meaning].categories automagically
+          // we still need to remove it manually, tho
           word.meaningsSl[meaning].categories.splice(i, 1);
         } else {
           i++;
