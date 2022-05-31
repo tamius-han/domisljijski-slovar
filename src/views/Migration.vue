@@ -2,7 +2,11 @@
 <h1>Migrate shit with this one trick</h1>
 
 <input v-model="v1_api" />
-<a @click="getTerms()">Uvozi besede</a>
+<a @click="getTerms()">Uvozi besede</a><br/><br/>
+
+Alternativno lahko pripopaš sem notri export (json string)<br/>
+<textarea v-model="processedDataJson"></textarea><br/>
+<a @click="getTermsFromJson()">Uvozi besede, ampak iz te besediloškatle</a> ** <a @click="processedDataJson = JSON.stringify(processedData, null, 2)">dej mi te besede nazaj v iščiškatlo</a>
 
 <div v-for="(word, index) in processedData" :key="index" class="fr">
 
@@ -13,10 +17,6 @@
       <div class="fc">
         Word
         <input v-model="word.enWord.word"/>
-      </div>
-      <div class="fc">
-        Type (1 n, 2 v, 3 adj)
-        <input v-model="word.enWord.type" @input="updateWordType(index)"/>
       </div>
       <div class="fc">
         Notes
@@ -35,18 +35,30 @@
 
   <!-- ENGLISH - MEANING -->
   <div class="fc" style="border: 1px solid #000; background-color: rgba(255,128,64, 0.5); margin: 0.25rem;">
-    <div>EN MEANING</div>
+    <div>EN MEANING</div> <small>— {{word.enMeaning.meaning}}</small>
     <div class="fr">
       <div class="fc">
         MEANING
         <input v-model="word.enMeaning.meaning"/>
+      </div>
+      <div class="fc">
+        Type (1 n, 2 v, 3 adj)
+        <input v-model="word.enWord.type" @input="updateWordType(index)"/>
+      </div>
+      <div class="fc">
+        word prio (EN ← SI)
+        <input v-model="word.enMeaning.wordPriority"/>
+      </div>
+            <div class="fc">
+        meaning prio (EN → SI)
+        <input v-model="word.enMeaning.meaningPriority"/>
       </div>
     </div>
   </div>
 
   <!-- SLO - MEANING -->
   <div class="fc" style="border: 1px solid #000; background-color: rgba(128,128,255, 0.5); margin: 0.25rem;">
-    <div>SLO MEANING</div>
+    <div>SLO MEANING</div> <small>— {{word.slMeaning.meaning}}</small>
     <div class="fr">
       <div class="fc">
         MEANING
@@ -57,10 +69,13 @@
         <input v-model="word.slMeaning.notes"/>
       </div>
       <div class="fc">
-        priority
-        <input v-model="word.slMeaning.priority"/>
+        meaning prio (EN ← SI)
+        <input v-model="word.enMeaning.meaningPriority"/>
       </div>
-
+            <div class="fc">
+        word prio (EN → SI)
+        <input v-model="word.enMeaning.wordPriority"/>
+      </div>
     </div>
   </div>
 
@@ -84,6 +99,10 @@
         gender extras
         <textarea v-model="word.slWord.genderExtras"/>
       </div>
+      <div class="fc">
+        etymology
+        <textarea v-model="word.slWord.etymology" />
+      </div>
     </div>
   </div>
 
@@ -104,6 +123,12 @@
   </div>
 
 </div>
+
+<div>JEZUS KRISTUS, JSON BOURNE!</div>
+<pre>
+{{processedData}}
+</pre>
+
 </template>
 
 <script>
@@ -116,6 +141,7 @@ export default defineComponent({
       v1_api: '',
       processedData: [],
       forceReloadPls: true,
+      processedDataJson: ''
     }
   },
   mixins: [
@@ -127,7 +153,7 @@ export default defineComponent({
   methods: {
     updateWordType(index) {
       console.log('updating word type for index:', index, this.processedData.length);
-      this.processedData[index].slWord.type = this.processedData[index].enWord.type;
+      this.processedData[index].slMeaning.type = this.processedData[index].enMeaning.type;
 
       // we hope that similar word types happen to be local to each other
       for (let i = index + 1; i < this.processedData.length; i++) {
@@ -146,6 +172,9 @@ export default defineComponent({
       for (let i = index + 1; i < this.processedData.length; i++) {
         this.processedData[i].slWord.credit = this.processedData[index].slWord.credit;
       }
+    },
+    getTermsFromJson() {
+      this.processedData = JSON.parse(this.processedDataJson)
     },
     async getTerms() {
       const data = [];
@@ -166,18 +195,22 @@ export default defineComponent({
           const enWord = {
             language: 'en',
             word: word.en_word,
-            type: 0,
             notes: '',
             altSpellings: '',
             altSpellingsHidden: '',
           }
           const enMeaning = {
-            meaning: word.en_description
+            meaning: word.en_description,
+            type: 0,
+            wordPriority: 0,
+            meaningPriority: 0,
           }
           const slMeaning = {
             meaning: word.sl_description,
             notes: '',
-            priority: 0,
+            wordPriority: 0,
+            meaningPriority: 0,
+            type: 0,
           };
           const categories = '';
           const slWord = {
@@ -199,6 +232,7 @@ export default defineComponent({
         }
       }
 
+      data.sort((a, b) => a.enWord.word?.localeCompare(b.enWord.word));
       this.processedData = data;
     },
     getCategoriesFromTree(categories, allCategories) {
@@ -262,8 +296,11 @@ export default defineComponent({
           }
 
           // we have IDs, time to add meanings
-          entry.enMeaning.wordIds = [enId];
-          entry.slMeaning.wordIds = [slId];
+          entry.enMeaning.wordId = enId;
+          entry.slMeaning.wordId = slId;
+
+          entry.enMeaning.categoryIds = entry.categories.split(',').map(x => +x);
+          entry.slMeaning.categoryIds = entry.enMeaning.categoryIds;
 
           // TODO: get categories
 
@@ -276,7 +313,7 @@ export default defineComponent({
             enmId = entry.enMeaning.id;
           } else {
             newMeaningEn = true;
-            const newEnMeaning = await this.post('/meaning', entry.enMeaning);
+            const newEnMeaning = await this.post('/meanings', entry.enMeaning);
 
             if (!newEnMeaning.data[0].id) {
               console.warn('failed to add entry — en meaning failed:', entry, '. skipping ...');
@@ -297,7 +334,7 @@ export default defineComponent({
             slmId = entry.slMeaning.id;
           } else {
             newMeaningSl = true;
-            const newMeaning = await this.post('/meaning', entry.slMeaning);
+            const newMeaning = await this.post('/meanings', entry.slMeaning);
 
             if (!newMeaning.data[0].id) {
               console.warn('failed to add entry — sl meaning failed:', entry, '. skipping ...');
@@ -325,12 +362,38 @@ export default defineComponent({
 
           if (newTranslationNeeded) {
             // TODO: add new translation
+            await this.post('/translations', {
+              meaning_en: enmId,
+              meaning_sl: slmId
+            });
           } else {
             if (newEnWord) {
               // bind en word to en meaning
+              try {
+                const r = await this.post('/bindMeaning', {
+                  meaning_id: enmId,
+                  word_id: enId,
+                  wordPriority: entry.enMeaning.wordPriority,
+                  meaningPriority: entry.enMeaning.meaningPriority
+                });
+              } catch (e) {
+                console.warn('failed to bind meaning — en meaning failed:', entry, '. skipping ...');
+                console.warn('backend returned:', e);
+              }
             }
             if (newSlWord) {
               // bind sl word to sl meaning
+              try {
+                await this.post('/bindMeaning', {
+                  meaning_id: slmId,
+                  word_id: slId,
+                  wordPriority: entry.slMeaning.wordPriority,
+                  meaningPriority: entry.slMeaning.meaningPriority
+                });
+              } catch (e) {
+                console.warn('failed to bind meaning — sl meaning failed:', entry, '. skipping ...');
+                console.warn('backend returned:', e);
+              }
             }
           }
 
