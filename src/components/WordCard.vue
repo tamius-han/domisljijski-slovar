@@ -1,5 +1,9 @@
 <template>
   <div class="word-card">
+    <div class="word-card-border y top"></div>
+    <div class="word-card-border x left"></div>
+    <div class="word-card-border x right"></div>
+    <div class="word-card-border y bottom"></div>
 
     <div class="word-row">
       <div class="word-main">
@@ -91,4 +95,52 @@ export default defineComponent({
   font-family: 'Vollkorn SC';
 }
 
+.word-card {
+  position: relative;
+}
+.word-card-border {
+  position: absolute;
+
+  background-color: rgba(255,128,64, 0.25); // debug
+
+  &.x {
+    top: 0;
+    width: 0.5rem;
+    height: 100%;
+  }
+  &.y {
+    left: 0;
+    width: 100%;
+    height: 0.5rem;
+
+    &:before, &:after {
+      content: '';
+      width: 1rem;
+      height: 1rem;
+      top: -0.5rem;
+      left: -0.5rem;
+    }
+
+    &:before {
+      content: '';
+    }
+
+    &:after {
+      content: '';
+    }
+  }
+
+  &.top {
+    top: -0.25rem;
+  }
+  &.bottom {
+    bottom: 0.25rem;
+  }
+  &.left {
+    left: -0.25rem;
+  }
+  &.right {
+    right: 0.25rem;
+  }
+}
 </style>
