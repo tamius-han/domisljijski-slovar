@@ -55,7 +55,10 @@ export default defineComponent({
       }
 
       if ($event.added) {
-        $event.value.push(categoryId);
+        // only add self if self is missing from the list
+        if ($event.value.indexOf(categoryId) === -1) {
+          $event.value.push(categoryId);
+        }
       } else {
         $event.value = $event.value.filter((x: any) => x !== categoryId);
       }
