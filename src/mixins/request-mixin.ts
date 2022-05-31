@@ -1,7 +1,7 @@
 import WordFilter from '@/types/word-filter.interface';
 import axios, { AxiosRequestConfig } from 'axios';
 import env from '../../config/env';
-import {buildQs, worldFilter2qsParams, processTranslateResponse} from '../utils/utils';
+import {buildQs, worldFilter2qsParams, processTranslateResponse, buildCategoryTree} from '../utils/utils';
 
 const requestMixin = {
   methods: {
@@ -63,9 +63,12 @@ const requestMixin = {
     },
     async getCategories() {
       try {
-        const res = await axios.get('/categories');
+        const res = await this.get('/categories');
+        return buildCategoryTree(res.data);
       } catch (e) {
-
+        console.warn('[request-mixin::getCategories] Could not parse categories response!');
+        console.error('[request-mixin::getCategories] Error:', e);
+        return [] as any[];
       }
     },
     async getTranslations(filter: WordFilter) {
