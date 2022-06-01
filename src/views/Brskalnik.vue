@@ -20,7 +20,40 @@
       </div>
       <div class="">
         <div class="">Vrste besed</div>
-        <div class="">Todo: list categories</div>
+        <div class="filters-region">
+          <div class="label">Jezik iskanja</div>
+          <div class="switch">
+            <div
+              class="switch-option"
+              :class="{'active': searchFilter.language === 'en'}"
+              @click="toggleLanguage('en')"
+            >
+              Angleščina
+            </div>
+            <div
+              class="switch-option"
+              :class="{'active': searchFilter.language === 'sl'}"
+              @click="toggleLanguage('sl')"
+            >
+              Slovenščina
+            </div>
+          </div>
+          <div class="label">
+            Kategorije
+          </div>
+          <div class="">
+            <CategoryTree
+              :categories="categories"
+              :value="searchFilter.categoryIds"
+              :depth="0"
+              languagePriority="sl"
+            />
+          </div>
+          <div class="label">
+            Zadetkov na stran
+          </div>
+        </div>
+
       </div>
       <div class="">
         <h3>Zadetki iskanja</h3>
@@ -109,7 +142,7 @@ export default defineComponent({
       // clear all the filters!
       this.searchFilter.search = '';
       this.searchFilter.page = 0;
-      this.searchFilter.categoryId = undefined;
+      this.searchFilter.categoryIds = undefined;
       this.searchFilter.meaningId = undefined;
       this.searchFilter.id = undefined;
       this.searchFilter.sourceLanguage = undefined;
