@@ -2,16 +2,21 @@
   <div id="app">
     <div class="mobile-layout">
       <div class="mobile-header">
-        <span class="title">
-          <small>Domišljijski slovarček</small><br/>
+        <h1 class="title text-center">
+          <small>Domišljijski slovarček<br/></small>
           Brksanje
-        </span>
+        </h1>
       </div>
-      <div class="">
-        <div class="searchbox">
-          <div class="">Išči</div>
-          <div>
-            <input v-debounce:1s="search" :value="searchFilter.search" />
+      <div class="word-list-container">
+        <div class="searchbox text-center">
+          <div class="w100">Išči</div>
+          <div class="w100">
+            <input
+              v-debounce:1s="search"
+              @input="search($event as any as string)"
+              :value="searchFilter.search"
+              style="width: 24rem; max-width: 100%"
+            />
           </div>
           <a @click="showAll()">Pokaži vse</a>
         </div>
@@ -107,6 +112,7 @@
 </template>
 
 <script lang="ts">
+import CategoryTree from '../components/CategoryTree.vue'
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
 import WordCard from '../components/WordCard.vue';
@@ -120,7 +126,8 @@ export default defineComponent({
   ],
   components: {
     WordCard,
-    Paginator
+    Paginator,
+    CategoryTree
   },
   data() {
     return {
@@ -128,6 +135,7 @@ export default defineComponent({
       hits: [] as Word[],
       totalHits: 0,
       languagePriority: 'auto',
+      categories: [] as any[],
 
       searchFilter: {
         search: '',
@@ -140,8 +148,10 @@ export default defineComponent({
       }
     }
   },
-  created() {
+  async created() {
     this.canEdit = !!this.getAuthToken();
+    this.categories = await this.getCategories();
+    console.log('got categories!', JSON.parse(JSON.stringify(this.categories)));
   },
   methods: {
     showAll() {
@@ -171,8 +181,6 @@ export default defineComponent({
       console.log("hits:", words);
       this.hits = words.words;
       this.totalHits = +words.total[0].total;
-    },
-    async getCategories() {
     },
   }
 })

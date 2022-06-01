@@ -1,9 +1,16 @@
 <template>
-xxx
   <div
-    v-for="category of categories" :key="category.id"
+    v-for="(category, index) of categories" :key="category.id"
     class="category-box"
+    :class="{
+      'depth-1': depth === 1,
+      'depth-2': depth === 2,
+      'depth-3': depth === 3,
+      'notLast': index < categories.length - 1
+    }"
   >
+    <div class="category-decorative-line">
+    </div>
     <div
       class="category-toggle"
       :class="{
@@ -15,6 +22,8 @@ xxx
       }"
       @click="selectCategory(category.id)"
     >
+      <div class="category-decorative-line">
+      </div>
       <div class="category-label primary-en">
         {{category.nameEn}}
       </div>
@@ -22,15 +31,17 @@ xxx
         {{category.nameSl}}
       </div>
     </div>
-    <CategoryTree
-      v-if="category.children && category.children.length > 0"
-      :depth="depth + 1"
-      :languagePriority="languagePriority"
-      :categories="category.children"
-      :selectParents="selectParents"
-      :value="value"
-      @input="childrenUpdated($event, category.id)"
-    ></CategoryTree>
+    <div class="category-tree-indent">
+      <CategoryTree
+        v-if="category.children && category.children.length > 0"
+        :depth="depth + 1"
+        :languagePriority="languagePriority"
+        :categories="category.children"
+        :selectParents="selectParents"
+        :value="value"
+        @input="childrenUpdated($event, category.id)"
+      ></CategoryTree>
+    </div>
   </div>
 </template>
 
@@ -115,10 +126,44 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .category-box {
-  border: 1px solid;
-  padding-left: 2rem;
+  padding-left: 1rem;
+
+  position: relative;
+
+  &.notLast > .category-decorative-line,
+  &:not(.notLast) > .category-toggle > .category-decorative-line {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    left: 1rem;
+    height: 100%;
+    aspect-ratio: 1;
+
+    &:before {
+      content: '';
+      display: block;
+
+      left: 50%;
+
+      width: 100%;
+      height: 100%;
+      background-image: url('/img/page-elements/line.webp');
+      background-repeat: repeat-x;
+      background-size: auto 6px;
+      background-position: center center;
+      transform:  translate(-50%, 0%) rotate(90deg);
+    }
+  }
 }
+.category-toggle {
+  position: relative;
+  padding: 0.25rem 1rem;
+}
+.category-tree-indent {
+  padding-left: 1rem;
+}
+
 .category-toggle.toggled {
-  background-color: rgba(255, 128, 64, 0.25);
+  // background-color: #4f322c
 }
 </style>
