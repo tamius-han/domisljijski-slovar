@@ -7,6 +7,15 @@
 
     <div class="word-row">
       <div class="word-main">
+        <div class="word-main-underline">
+          <div class="container">
+            <div
+              class="link-button"
+              :class="{'copied': wordLinkCopied}"
+              @click="copyWordLinkToClipboard()"
+            ></div>
+          </div>
+        </div>
         <span
           class="term hover-popup"
           :class="word.language === 'en' ? 'flag-uk' : 'flag-sl'"
@@ -17,9 +26,7 @@
         <!-- <span class="word-type hover-popup">{{parseWordType(word.type, language)}}</span> -->
         <span v-if="word.genderExtras?.gender" class="word-type gender">{{word.genderExtras?.gender}}</span>
       </div>
-      <div class="copy-container">
-        copy URL
-      </div>
+
     </div>
 
     <div class="word-card-body">
@@ -42,6 +49,10 @@ import MeaningCard from './MeaningCard.vue';
 
 export default defineComponent({
   data() {
+    return {
+      wordLinkCopied: false,
+      wordLinkCopiedTimeout: undefined,
+    };
   },
   components: {
     MeaningCard
@@ -51,7 +62,13 @@ export default defineComponent({
     'languagePriority',
   ],
   methods: {
-
+    copyWordLinkToClipboard() {
+      const link = `${window.location.protocol}://${window.location.host}/beseda/?id=${this.word.id}`;
+      navigator.clipboard.writeText(link);
+      this.wordLinkCopied = true;
+      clearTimeout(this.wordLinkCopiedTimeout);
+      setTimeout(() => this.wordLinkCopied = false, 2500);
+    }
   }
 })
 </script>
@@ -76,18 +93,41 @@ export default defineComponent({
 
 }
 
-.word-main {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.204);
-  background-color: rgb(240, 201, 153);
+.copied {
+  position: relative;
+
+  &:after {
+    content: 'Povezava kopirana!';
+    position: absolute;
+
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, calc(100% + 0.5rem));
+
+    border: 1px solid rgba(0,0,0,0.25);
+    border-radius: 0.125rem;
+    box-shadow: 0.125rem 0.125rem 0.25rem rgba(0,0,0,0.25);
+
+    padding: 0.25rem;
+    text-align: center;
+  }
+}
+
+
+.flag-uk:before, .flag-sl:before {
+  margin-left: 1rem;
+  margin-right: 0.25rem;
+  margin-top: -5rem;
+  display: inline-block;
+  transform: translateY(0.125rem);
 }
 
 .flag-uk:before {
   content: '🇬🇧';
-  margin-right: 0.5rem;
+
 }
 .flag-sl:before {
   content: '🇸🇮';
-  margin-right: 0.5rem;
 }
 
 .term {
@@ -97,50 +137,173 @@ export default defineComponent({
 
 .word-card {
   position: relative;
+  margin:  1.5rem 0.5rem;
+  box-sizing: border-box;
+  background-color: rgba(255, 225, 199, 0.25);
+
+  .word-main {
+    position: relative;
+    border-bottom: 1px solid transparent;
+    background-color: rgb(247, 208, 157);
+  }
+
+  .word-card-body {
+    padding: 1rem;
+
+    ol {
+      margin-left: 1rem;
+      padding-left: 0px;
+    }
+  }
+}
+
+.word-main-underline {
+  position: absolute;
+
+  bottom: -0.25rem;
+  left: 1rem;
+  width: calc(100% - 2rem);
+  height: 0.5rem;
+  background-image: url('/img/page-elements/line.webp');
+  background-repeat: repeat-x;
+  background-size: auto 6px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 0rem 0.75rem;
+
+    .link-button {
+      width: 48px;
+      height: 48px;
+      z-index: 10;
+      cursor: pointer;
+
+      background-image: url('/img/page-elements/diamond-link-large.webp');
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center center;
+
+      transform: translateY(calc(-50% + 0.25rem));
+    }
+    .link-button:hover {
+      background-image: url('/img/page-elements/diamond-link.webp');
+      cursor: pointer;
+    }
+  }
 }
 .word-card-border {
   position: absolute;
-
-  background-color: rgba(255,128,64, 0.25); // debug
+  pointer-events: none;
+  opacity: 0.42;
+  z-index: 100000;
 
   &.x {
     top: 0;
-    width: 0.5rem;
     height: 100%;
+    aspect-ratio: 1;
+
+    &:after {
+      content: '';
+      position: absolute;
+
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 0.5rem;
+      background-image: url('/img/page-elements/line.webp');
+      background-repeat: repeat-x;
+      background-size: auto 6px;
+      transform:  translate(-50%, 50%) rotate(90deg);
+    }
   }
   &.y {
     left: 0;
     width: 100%;
     height: 0.5rem;
 
+    background-image: url('/img/page-elements/line.webp');
+    background-repeat: repeat-x;
+    background-size: auto 6px;
+
     &:before, &:after {
-      content: '';
-      width: 1rem;
-      height: 1rem;
-      top: -0.5rem;
-      left: -0.5rem;
+      content: ' ';
+      position: absolute;
+
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 2rem;
+      background-image: url('/img/page-elements/line-corner.webp');
+      background-size: 24px 24px;
+      background-position: center center;
+      background-repeat: no-repeat;
     }
 
-    &:before {
-      content: '';
-    }
 
-    &:after {
-      content: '';
-    }
   }
 
   &.top {
     top: -0.25rem;
+
+    // corner crosses
+    &:before, &:after {
+      top: calc(-0.75rem - 1px);
+    }
+
+    &:before {
+      left: calc(-1rem + 1px);
+    }
+
+    &:after {
+      content: '';
+      left: 0;
+      width: 100%;
+      transform: translateX(50%) rotate(90deg);
+    }
   }
   &.bottom {
-    bottom: 0.25rem;
+    bottom: -0.25rem;
+
+    // corner crosses
+    &:before, &:after {
+      bottom: -0.75rem;
+    }
+    &:before {
+      left: calc(-1rem + 1px);
+      top: calc(-0.75rem - 1px);
+      transform: rotate(-90deg);
+    }
+
+    &:after {
+      left: 1px;
+      top: calc(-0.75rem - 1px);
+      width: 100%;
+      transform: translateX(50%) rotate(180deg);
+    }
   }
   &.left {
-    left: -0.25rem;
+    top: -0.5rem;
+
+    &:after {
+      transform:  translate(-50%, 50%) rotate(90deg);
+    }
   }
   &.right {
-    right: 0.25rem;
+    top: -0.5rem;
+    right: 0;
+
+    &:after {
+      transform:  translate(50%, 50%) rotate(90deg);
+    }
   }
 }
 </style>

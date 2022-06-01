@@ -61,8 +61,8 @@
         </div>
 
       </div>
-      <div class="">
-        <h3>Zadetki iskanja</h3>
+      <div class="word-list-container">
+        <h3 class="text-center">Zadetki iskanja</h3>
 
         <!-- seznam besed tle -->
         <div v-if="hits.length > 0" class="">
@@ -96,7 +96,7 @@
           </Paginator>
 
         </div>
-        <div v-else class="">
+        <div v-else class="text-center">
           Ni zadetkov.
         </div>
       </div>
@@ -190,6 +190,11 @@ export default defineComponent({
 
 .word-list {
   padding: 0.5rem;
+}
+
+.word-list-container {
+  max-width: 42rem;
+  margin: 0 auto;
 }
 
 </style>

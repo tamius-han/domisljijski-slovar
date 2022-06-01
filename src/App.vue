@@ -147,8 +147,11 @@ h1, h2 {
   margin-bottom: 0.5em;
 }
 
-h1 {
+h1, h2, h3 {
   font-family: 'Vollkorn', serif;
+}
+
+h1 {
   color: $primary-text;
   font-size: 3rem;
 
@@ -156,13 +159,12 @@ h1 {
 }
 
 h2 {
-  font-family: 'IM Fell DW Pica', serif;
   font-size: 1.75rem;
   color: #fa6;
 }
 
 .h-inline {
-  font-family: 'IM Fell DW Pica', serif;
+  font-family: 'Vollkorn', serif;
   font-style: italic;
   font-size: 1.25em;
 }
@@ -310,6 +312,10 @@ h2 {
 
 .h100 {
   height: 100%;
+}
+
+.text-center {
+  text-align: center;
 }
 </style>
 

@@ -72,7 +72,7 @@ export function worldFilter2qsParams(filter: WordFilter) {
     s: filter.search,
     w: filter.id,
     m: filter.meaningId,
-    cat: filter.categoryId,
+    cat: filter.categoryIds?.join(','),
     lang: filter.sourceLanguage,
 
     // pagination
