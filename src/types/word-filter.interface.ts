@@ -1,7 +1,7 @@
 export default interface WordFilter {
   id?: number,
   meaningId?: number,
-  categoryId?: number,
+  categoryIds?: number[],
   search?: string,
   sourceLanguage?: 'en' | 'sl',
 
