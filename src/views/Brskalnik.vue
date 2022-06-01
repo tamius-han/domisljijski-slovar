@@ -50,7 +50,13 @@
             />
           </div>
           <div class="label">
-            Zadetkov na stran
+            Zadetkov na stran:
+            <select v-model="searchFilter.limit">
+              <option :value="16">16</option>
+              <option :value="32">32</option>
+              <option :value="64">64</option>
+              <option :value="128">128</option>
+            </select>
           </div>
         </div>
 
@@ -125,7 +131,7 @@ export default defineComponent({
 
       searchFilter: {
         search: '',
-        categoryId: undefined,
+        categoryIds: [],
         meaningId: undefined,
         id: undefined,
         sourceLanguage: undefined,
@@ -142,7 +148,7 @@ export default defineComponent({
       // clear all the filters!
       this.searchFilter.search = '';
       this.searchFilter.page = 0;
-      this.searchFilter.categoryIds = undefined;
+      this.searchFilter.categoryIds = [];
       this.searchFilter.meaningId = undefined;
       this.searchFilter.id = undefined;
       this.searchFilter.sourceLanguage = undefined;
