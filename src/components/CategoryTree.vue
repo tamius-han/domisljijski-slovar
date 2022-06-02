@@ -63,9 +63,8 @@
         {{category.nameSl}}
       </div>
     </div>
-    <div class="category-tree-indent">
+    <div v-if="category.children && category.children.length > 0" class="category-tree-indent">
       <CategoryTree
-        v-if="category.children && category.children.length > 0"
         :depth="depth + 1"
         :languagePriority="languagePriority"
         :categories="category.children"
@@ -157,6 +156,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+
+
 .category-box {
   padding-left: 1rem;
 
@@ -168,7 +169,7 @@ export default defineComponent({
     position: absolute;
     top: 0;
     left: 1rem;
-    height: 100%;
+    height: calc(100% + 1.5rem);
     aspect-ratio: 1;
 
     &:before {
@@ -183,22 +184,30 @@ export default defineComponent({
       background-repeat: repeat-x;
       background-size: auto 6px;
       background-position: center center;
-      transform:  translate(-50%, 0%) rotate(90deg);
+      transform:  translate(-50%, -1.5rem) rotate(90deg);
     }
+  }
+  &:not(.notLast) > .category-toggle > .category-decorative-line {
+    transform: translateX(-2rem)
   }
 }
 .category-toggle {
   position: relative;
+  margin: 0rem 1rem;
   padding: 0.25rem 1rem;
 }
 .category-tree-indent {
   padding-left: 1rem;
+  padding-top: 1.25rem;
+  padding-bottom: 1.5rem;
 }
 
 .category-toggle.toggled {
-  // background-color: #4f322c
+  background-color: #4f322c
 }
 
+// if you want to retain at least some sanity,
+// FOLD THIS CLASS AND NEVER EVER LOOK AT IT AGAIN EVER
 .category-card-border {
   position: absolute;
   pointer-events: none;
@@ -228,17 +237,71 @@ export default defineComponent({
     left: 0;
     width: 100%;
     height: 0.5rem;
+  }
+
+  &.top {
+    top: calc(-0.25rem + 1px);
 
     background-image: url('/img/page-elements/line.webp');
     background-repeat: repeat-x;
     background-size: auto 6px;
 
-    &:before.gap-before, &:after.gap-before,
-    &:before.gap-after, &:after.gap-after {
+    // corner crosses
+    &:before, &:after,
+    &.gap-before:before, &.gap-before:after {
+      content: ' ';
+
+      position: absolute;
+      top: calc(-0.75rem - 1px);
+
+      width: 2rem;
+      height: 2rem;
+      background-size: 24px 24px;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    &.gap-before:before, &.gap-before:after {
+      background-image: url('/img/page-elements/line-corner.webp');
+    }
+
+    &:not(.gap-before) {
+      &:before, &:after {
+        background-image: url('/img/page-elements/line-corner-xonly.webp');
+      }
+    }
+
+    &.gap-before:before, &:before {
+      left: calc(-1rem - 1px);
+    }
+
+    &.gap-before:after, &:after {
+      content: '';
+      left: 0;
+      width: 100%;
+    }
+    &.gap-before:after {
+      transform: translateX(50%) rotate(90deg);
+    }
+    &:not(.gap-before):after {
+      transform: translateX(50%) rotate(180deg);
+    }
+  }
+  &.bottom {
+    bottom: -0.25rem;
+
+    &.gap-after {
+      background-image: url('/img/page-elements/line.webp');
+      background-repeat: repeat-x;
+      background-size: auto 6px;
+    }
+
+    // corner crosses
+    &.gap-after:before, &.gap-after:after {
       content: ' ';
       position: absolute;
 
-      top: 0;
+      bottom: -0.75rem;
       left: 0;
       width: 2rem;
       height: 2rem;
@@ -248,50 +311,24 @@ export default defineComponent({
       background-repeat: no-repeat;
     }
 
-
-  }
-
-  &.top {
-    top: -0.25rem;
-
-    // corner crosses
-    &:before, &:after {
+    &.gap-after:before {
       top: calc(-0.75rem - 1px);
-    }
-
-    &:before {
-      left: calc(-1rem + 1px);
-    }
-
-    &:after {
-      content: '';
-      left: 0;
-      width: 100%;
-      transform: translateX(50%) rotate(90deg);
-    }
-  }
-  &.bottom {
-    bottom: -0.25rem;
-
-    // corner crosses
-    &:before, &:after {
-      bottom: -0.75rem;
-    }
-    &:before {
-      left: calc(-1rem + 1px);
-      top: calc(-0.75rem - 1px);
+      left: calc(-1rem);
       transform: rotate(-90deg);
     }
 
-    &:after {
+    &.gap-after:after {
       left: 1px;
       top: calc(-0.75rem - 1px);
       width: 100%;
       transform: translateX(50%) rotate(180deg);
     }
+
+
   }
   &.left {
     top: -0.5rem;
+    transform: translate(calc(-50% + 0.5rem), 0);
 
     &:after {
       transform:  translate(-50%, 50%) rotate(90deg);
