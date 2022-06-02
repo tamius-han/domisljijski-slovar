@@ -3,10 +3,14 @@
     v-for="(category, index) of categories" :key="category.id"
     class="category-box"
     :class="{
+      'top-level': !depth,
       'depth-1': depth === 1,
       'depth-2': depth === 2,
       'depth-3': depth === 3,
-      'notLast': index < categories.length - 1
+      'notLast': index < categories.length - 1,
+      'first': index === 0,
+      'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+      'gap-after': index === categories.length - 1 || category.children?.length > 0,
     }"
   >
     <div class="category-decorative-line">
@@ -56,11 +60,16 @@
       ></div>
       <!-- #endregion -->
 
-      <div class="category-label primary-en">
-        {{category.nameEn}}
-      </div>
-      <div class="category-label primary-sl">
-        {{category.nameSl}}
+      <div class="category-select-marker"></div>
+      <div class="category-select-marker selection-indicator"></div>
+
+      <div class="fc">
+        <div class="category-label primary-en">
+          {{category.nameEn}}
+        </div>
+        <div class="category-label primary-sl">
+          {{category.nameSl}}
+        </div>
       </div>
     </div>
     <div v-if="category.children && category.children.length > 0" class="category-tree-indent">
@@ -156,12 +165,29 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.fc {
+  display: flex;
+  flex-direction: column;
+}
 
+.language-sl .primary-en, .language-en .primary-sl {
+  order: 2;
+  opacity: 0.75;
+  font-size: 0.8em;
+  font-style: italic;
+}
 
 .category-box {
   padding-left: 1rem;
 
   position: relative;
+
+  &.gap-before {
+    margin-top: 1.5rem;
+  }
+  &.top-level:not(.notLast) {
+    margin-bottom: 1.5rem;
+  }
 
   &.notLast > .category-decorative-line,
   &:not(.notLast) > .category-toggle > .category-decorative-line {
@@ -190,21 +216,106 @@ export default defineComponent({
   &:not(.notLast) > .category-toggle > .category-decorative-line {
     transform: translateX(-2rem)
   }
+  &.first > .category-decorative-line:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    z-index: 100002;
+    pointer-events: none;
+    width: 1rem;
+    height: 1rem;
+
+    background-image: url('/img/page-elements/diamond-small.webp');
+    background-repeat: no-repeat;
+    background-size: auto 12px;
+    background-position: center left;
+    transform:  translate(-50%, -2rem) rotate(90deg);
+  }
 }
 .category-toggle {
   position: relative;
   margin: 0rem 1rem;
   padding: 0.25rem 1rem;
+
+  .category-select-marker:after {
+    content: '';
+    z-index: 100010;
+
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    height: 100%;
+    aspect-ratio: 1;
+
+
+    background-repeat: no-repeat;
+    background-size: auto 24px;
+    background-position: center, center;
+    transform:  translate(calc(-50% - 1rem), 0%);
+    background-image: url('/img/page-elements/diamond-transparent.webp');
+  }
+  .category-select-marker:before {
+    content: '';
+    z-index: 10009;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 1rem;
+    height: 1rem;
+    background-color: rgb(133, 122, 106);
+    transform: translate(calc(-100% - 0.5rem), 100%) rotate(45deg);
+  }
+
+  &.toggled {
+    background-color: #de805b66;
+
+
+    .category-select-marker {
+      &:before {
+        background-color: rgb(109, 98, 80) !important;
+      }
+
+      &.selection-indicator:after {
+        content: '';
+        z-index: 100012;
+
+        position: absolute;
+        left: 0;
+        top: 0;
+
+        height: 100%;
+        aspect-ratio: 1;
+
+
+        background-repeat: no-repeat;
+        background-size: auto 24px;
+        background-position: center, center;
+        transform:  translate(calc(-50% - 1rem), 0%);
+        background-image: url('/img/page-elements/diamond-transparent-inner.webp');
+      }
+      &.selection-indicator:before {
+        content: '';
+        z-index: 10011;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        width: 0.4rem;
+        height: 0.4rem;
+        background-color: rgb(239, 214, 152) !important;
+        transform: translate(calc(-100% - 0.8rem), calc(100% + 0.8rem)) rotate(45deg);
+      }
+    }
+  }
 }
 .category-tree-indent {
   padding-left: 1rem;
-  padding-top: 1.25rem;
-  padding-bottom: 1.5rem;
 }
 
-.category-toggle.toggled {
-  background-color: #4f322c
-}
 
 // if you want to retain at least some sanity,
 // FOLD THIS CLASS AND NEVER EVER LOOK AT IT AGAIN EVER
@@ -272,7 +383,7 @@ export default defineComponent({
     }
 
     &.gap-before:before, &:before {
-      left: calc(-1rem - 1px);
+      left: calc(-1rem + 1px);
     }
 
     &.gap-before:after, &:after {
@@ -311,15 +422,15 @@ export default defineComponent({
       background-repeat: no-repeat;
     }
 
-    &.gap-after:before {
+    &.gap-after:before, &.gap-after:after {
       top: calc(-0.75rem - 1px);
-      left: calc(-1rem);
+    }
+    &.gap-after:before {
+      left: calc(-1rem + 2px);
       transform: rotate(-90deg);
     }
-
     &.gap-after:after {
       left: 1px;
-      top: calc(-0.75rem - 1px);
       width: 100%;
       transform: translateX(50%) rotate(180deg);
     }
