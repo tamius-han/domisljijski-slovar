@@ -22,8 +22,40 @@
       }"
       @click="selectCategory(category.id)"
     >
+
+      <!-- #region decorative lines -->
       <div class="category-decorative-line">
       </div>
+      <div
+        class="category-card-border y top"
+        :class="{
+          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+          'gap-after': index === categories.length - 1 || category.children?.length > 0,
+        }"
+      ></div>
+      <div
+        class="category-card-border x left"
+        :class="{
+          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+          'gap-after': index === categories.length - 1 || category.children?.length > 0,
+        }"
+      ></div>
+      <div
+        class="category-card-border x right"
+        :class="{
+          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+          'gap-after': index === categories.length - 1 || category.children?.length > 0,
+        }"
+      ></div>
+      <div
+        class="category-card-border y bottom"
+        :class="{
+          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+          'gap-after': index === categories.length - 1 || category.children?.length > 0,
+        }"
+      ></div>
+      <!-- #endregion -->
+
       <div class="category-label primary-en">
         {{category.nameEn}}
       </div>
@@ -165,5 +197,113 @@ export default defineComponent({
 
 .category-toggle.toggled {
   // background-color: #4f322c
+}
+
+.category-card-border {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.42;
+  z-index: 100000;
+
+  &.x {
+    top: 0;
+    height: 100%;
+    aspect-ratio: 1;
+
+    &:after {
+      content: '';
+      position: absolute;
+
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 0.5rem;
+      background-image: url('/img/page-elements/line.webp');
+      background-repeat: repeat-x;
+      background-size: auto 6px;
+      transform:  translate(-50%, 50%) rotate(90deg);
+    }
+  }
+  &.y {
+    left: 0;
+    width: 100%;
+    height: 0.5rem;
+
+    background-image: url('/img/page-elements/line.webp');
+    background-repeat: repeat-x;
+    background-size: auto 6px;
+
+    &:before.gap-before, &:after.gap-before,
+    &:before.gap-after, &:after.gap-after {
+      content: ' ';
+      position: absolute;
+
+      top: 0;
+      left: 0;
+      width: 2rem;
+      height: 2rem;
+      background-image: url('/img/page-elements/line-corner.webp');
+      background-size: 24px 24px;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+
+  }
+
+  &.top {
+    top: -0.25rem;
+
+    // corner crosses
+    &:before, &:after {
+      top: calc(-0.75rem - 1px);
+    }
+
+    &:before {
+      left: calc(-1rem + 1px);
+    }
+
+    &:after {
+      content: '';
+      left: 0;
+      width: 100%;
+      transform: translateX(50%) rotate(90deg);
+    }
+  }
+  &.bottom {
+    bottom: -0.25rem;
+
+    // corner crosses
+    &:before, &:after {
+      bottom: -0.75rem;
+    }
+    &:before {
+      left: calc(-1rem + 1px);
+      top: calc(-0.75rem - 1px);
+      transform: rotate(-90deg);
+    }
+
+    &:after {
+      left: 1px;
+      top: calc(-0.75rem - 1px);
+      width: 100%;
+      transform: translateX(50%) rotate(180deg);
+    }
+  }
+  &.left {
+    top: -0.5rem;
+
+    &:after {
+      transform:  translate(-50%, 50%) rotate(90deg);
+    }
+  }
+  &.right {
+    top: -0.5rem;
+    right: 0;
+
+    &:after {
+      transform:  translate(50%, 50%) rotate(90deg);
+    }
+  }
 }
 </style>
