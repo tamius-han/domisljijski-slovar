@@ -30,34 +30,38 @@
       <!-- #region decorative lines -->
       <div class="category-decorative-line">
       </div>
-      <div
-        class="category-card-border y top"
-        :class="{
-          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
-          'gap-after': index === categories.length - 1 || category.children?.length > 0,
-        }"
-      ></div>
-      <div
-        class="category-card-border x left"
-        :class="{
-          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
-          'gap-after': index === categories.length - 1 || category.children?.length > 0,
-        }"
-      ></div>
-      <div
-        class="category-card-border x right"
-        :class="{
-          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
-          'gap-after': index === categories.length - 1 || category.children?.length > 0,
-        }"
-      ></div>
-      <div
-        class="category-card-border y bottom"
-        :class="{
-          'gap-before': index === 0 || categories[index - 1].children?.length > 0,
-          'gap-after': index === categories.length - 1 || category.children?.length > 0,
-        }"
-      ></div>
+      <div class="category-card-border-wrap">
+        <div>
+          <div
+            class="category-card-border y top"
+            :class="{
+              'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+              'gap-after': index === categories.length - 1 || category.children?.length > 0,
+            }"
+          ></div>
+          <div
+            class="category-card-border x left"
+            :class="{
+              'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+              'gap-after': index === categories.length - 1 || category.children?.length > 0,
+            }"
+          ></div>
+          <div
+            class="category-card-border x right"
+            :class="{
+              'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+              'gap-after': index === categories.length - 1 || category.children?.length > 0,
+            }"
+          ></div>
+          <div
+            class="category-card-border y bottom"
+            :class="{
+              'gap-before': index === 0 || categories[index - 1].children?.length > 0,
+              'gap-after': index === categories.length - 1 || category.children?.length > 0,
+            }"
+          ></div>
+        </div>
+      </div>
       <!-- #endregion -->
 
       <div class="category-select-marker"></div>
@@ -195,27 +199,40 @@ export default defineComponent({
     position: absolute;
     top: 0;
     left: 1rem;
-    height: calc(100% + 1.5rem);
     aspect-ratio: 1;
 
     &:before {
       content: '';
       display: block;
-
       left: 50%;
-
       width: 100%;
       height: 100%;
       background-image: url('/img/page-elements/line.webp');
       background-repeat: repeat-x;
       background-size: auto 6px;
       background-position: center center;
-      transform:  translate(-50%, -1.5rem) rotate(90deg);
+      transform:  translate(-50%, -1.75rem) rotate(90deg);
     }
   }
-  &:not(.notLast) > .category-toggle > .category-decorative-line {
-    transform: translateX(-2rem)
+  &.notLast > .category-decorative-line {
+    height: 100%;
   }
+  &.gap-before > .category-decorative-line {
+    height: calc(100% + 1.55rem) !important;
+  }
+  &:not(.notLast) > .category-toggle > .category-decorative-line {
+    height: calc(100% + 1rem);
+    transform: translate(-2rem, -0.5rem);
+  }
+  &.gap-before:not(.notLast) > .category-toggle > .category-decorative-line {
+    height: calc(100% + 1.5rem);
+    transform: translate(calc(-2rem + 0.5px), -1.5rem);
+  }
+  &.first:not(.notLast) > .category-toggle > .category-decorative-line {
+    height: 100% !important;
+    transform: translate(-2rem, 0rem);
+  }
+
   &.first > .category-decorative-line:after {
     content: '';
     position: absolute;
@@ -229,7 +246,7 @@ export default defineComponent({
     background-repeat: no-repeat;
     background-size: auto 12px;
     background-position: center left;
-    transform:  translate(-50%, -2rem) rotate(90deg);
+    transform:  translate(-50%, calc(-2rem + 1px)) rotate(90deg);
   }
 }
 .category-toggle {
@@ -317,12 +334,26 @@ export default defineComponent({
 }
 
 
+.category-card-border-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.42;
+  pointer-events: none;
+}
+.category-card-border-wrap > div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 // if you want to retain at least some sanity,
 // FOLD THIS CLASS AND NEVER EVER LOOK AT IT AGAIN EVER
 .category-card-border {
   position: absolute;
   pointer-events: none;
-  opacity: 0.42;
   z-index: 100000;
 
   &.x {
@@ -426,11 +457,10 @@ export default defineComponent({
       top: calc(-0.75rem - 1px);
     }
     &.gap-after:before {
-      left: calc(-1rem + 2px);
+      left: calc(-1rem + 1px);
       transform: rotate(-90deg);
     }
     &.gap-after:after {
-      left: 1px;
       width: 100%;
       transform: translateX(50%) rotate(180deg);
     }
@@ -439,15 +469,15 @@ export default defineComponent({
   }
   &.left {
     top: -0.5rem;
-    transform: translate(calc(-50% + 0.5rem), 0);
+    transform: translate(calc(-50% + 1.5rem), 0);
 
     &:after {
-      transform:  translate(-50%, 50%) rotate(90deg);
+      transform:  translate(calc(-50% - 1px), 50%) rotate(90deg);
     }
   }
   &.right {
     top: -0.5rem;
-    right: 0;
+    right: 1px;
 
     &:after {
       transform:  translate(50%, 50%) rotate(90deg);

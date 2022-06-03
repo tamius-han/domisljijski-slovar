@@ -1,9 +1,13 @@
 <template>
   <div class="word-card">
-    <div class="word-card-border y top"></div>
-    <div class="word-card-border x left"></div>
-    <div class="word-card-border x right"></div>
-    <div class="word-card-border y bottom"></div>
+    <div class="word-card-border-wrap">
+      <div>
+        <div class="word-card-border y top"></div>
+        <div class="word-card-border x left"></div>
+        <div class="word-card-border x right"></div>
+        <div class="word-card-border y bottom"></div>
+      </div>
+    </div>
 
     <div class="word-row">
       <div class="word-main">
@@ -143,7 +147,6 @@ export default defineComponent({
 
   .word-main {
     position: relative;
-    border-bottom: 1px solid transparent;
     background-color: rgb(247, 208, 157);
   }
 
@@ -157,10 +160,27 @@ export default defineComponent({
   }
 }
 
+
+.word-card-border-wrap {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.42;
+  pointer-events: none;
+  z-index: 100000;
+}
+.word-card-border-wrap > div {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .word-main-underline {
   position: absolute;
 
-  bottom: -0.25rem;
+  bottom: calc(-0.25rem - 1px);
   left: 1rem;
   width: calc(100% - 2rem);
   height: 0.5rem;
@@ -203,8 +223,6 @@ export default defineComponent({
 .word-card-border {
   position: absolute;
   pointer-events: none;
-  opacity: 0.42;
-  z-index: 100000;
 
   &.x {
     top: 0;
@@ -252,22 +270,23 @@ export default defineComponent({
   }
 
   &.top {
-    top: -0.25rem;
+    top: calc(-0.25rem + 1px);
 
     // corner crosses
     &:before, &:after {
-      top: calc(-0.75rem - 1px);
+      top: calc(-0.75rem );
     }
 
     &:before {
-      left: calc(-1rem + 1px);
+      left: calc(-1rem);
+      transform: translateY(-1px);
     }
 
     &:after {
       content: '';
       left: 0;
       width: 100%;
-      transform: translateX(50%) rotate(90deg);
+      transform: translate(50%, -1px) rotate(90deg);
     }
   }
   &.bottom {
@@ -278,13 +297,13 @@ export default defineComponent({
       bottom: -0.75rem;
     }
     &:before {
-      left: calc(-1rem + 1px);
+      left: calc(-1rem);
       top: calc(-0.75rem - 1px);
       transform: rotate(-90deg);
     }
 
     &:after {
-      left: 1px;
+      left: 0px;
       top: calc(-0.75rem - 1px);
       width: 100%;
       transform: translateX(50%) rotate(180deg);
@@ -292,6 +311,7 @@ export default defineComponent({
   }
   &.left {
     top: -0.5rem;
+    left: -1px;
 
     &:after {
       transform:  translate(-50%, 50%) rotate(90deg);
@@ -299,7 +319,7 @@ export default defineComponent({
   }
   &.right {
     top: -0.5rem;
-    right: 0;
+    right: 1px;
 
     &:after {
       transform:  translate(50%, 50%) rotate(90deg);
