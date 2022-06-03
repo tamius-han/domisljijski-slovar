@@ -169,7 +169,7 @@ export default defineComponent({
   height: 100%;
   opacity: 0.42;
   pointer-events: none;
-  z-index: 100000;
+  z-index: 100;
 }
 .word-card-border-wrap > div {
   position: relative;

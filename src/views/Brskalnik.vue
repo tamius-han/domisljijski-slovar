@@ -18,14 +18,21 @@
               style="width: 24rem; max-width: 100%"
             />
           </div>
-          <a @click="showAll()">Pokaži vse</a>
+          <a @click="showAll()">Pokaži vse</a> | <a @click="toggleFilters()">Omeji iskanje</a>
         </div>
         <!-- <div class="">[todo] search box</div> -->
         <!-- <a @click="getResults()">TEST ME</a> -->
       </div>
-      <div class="">
-        <div class="">Vrste besed</div>
-        <div class="filters-region">
+      <div class="main-container">
+        <div
+          class="filters-region"
+          :class="{
+            'active': showFilters,
+          }"
+        >
+          <div class="w-100 text-center">
+            <a @click="toggleFilters()">Nazaj</a>
+          </div>
           <div class="label">Jezik iskanja</div>
           <div class="switch">
             <div
@@ -46,7 +53,7 @@
           <div class="label">
             Kategorije
           </div>
-          <div class="">
+          <div class="categories">
             <CategoryTree
               :categories="categories"
               :value="searchFilter.categoryIds"
@@ -63,49 +70,50 @@
               <option :value="128">128</option>
             </select>
           </div>
-        </div>
-
-      </div>
-      <div class="word-list-container">
-        <h3 class="text-center">Zadetki iskanja</h3>
-
-        <!-- seznam besed tle -->
-        <div v-if="hits.length > 0" class="">
-
-          <Paginator
-            v-if="totalHits > hits.length"
-            :total="totalHits"
-            :pageSize="searchFilter.limit"
-            :currentPage="searchFilter.page"
-            :displayPages="2"
-            @changePage="changePage($event)"
-          >
-          </Paginator>
-          <div class="word-list">
-            <WordCard
-              v-for="word in hits"
-              :key="word.id"
-              :word="word"
-              :languagePriority="languagePriority"
-              >
-            </WordCard>
+          <div class="w-100 text-center">
+            <a @click="toggleFilters()">Nazaj</a>
           </div>
-          <Paginator
-            v-if="totalHits > hits.length"
-            :total="totalHits"
-            :pageSize="searchFilter.limit"
-            :currentPage="searchFilter.page"
-            :displayPages="2"
-            @changePage="changePage($event)"
-          >
-          </Paginator>
-
         </div>
-        <div v-else class="text-center">
-          Ni zadetkov.
+        <div class="word-list-container">
+          <h3 class="text-center">Zadetki iskanja</h3>
+
+          <!-- seznam besed tle -->
+          <div v-if="hits.length > 0" class="">
+
+            <Paginator
+              v-if="totalHits > hits.length"
+              :total="totalHits"
+              :pageSize="searchFilter.limit"
+              :currentPage="searchFilter.page"
+              :displayPages="2"
+              @changePage="changePage($event)"
+            >
+            </Paginator>
+            <div class="word-list">
+              <WordCard
+                v-for="word in hits"
+                :key="word.id"
+                :word="word"
+                :languagePriority="languagePriority"
+                >
+              </WordCard>
+            </div>
+            <Paginator
+              v-if="totalHits > hits.length"
+              :total="totalHits"
+              :pageSize="searchFilter.limit"
+              :currentPage="searchFilter.page"
+              :displayPages="2"
+              @changePage="changePage($event)"
+            >
+            </Paginator>
+
+          </div>
+          <div v-else class="text-center">
+            Ni zadetkov.
+          </div>
         </div>
       </div>
-
     </div>
 
   </div>
@@ -134,8 +142,10 @@ export default defineComponent({
       canEdit: false,
       hits: [] as Word[],
       totalHits: 0,
-      languagePriority: 'auto',
+      languagePriority: 'sl',
       categories: [] as any[],
+
+      showFilters: false,
 
       searchFilter: {
         search: '',
@@ -182,6 +192,9 @@ export default defineComponent({
       this.hits = words.words;
       this.totalHits = +words.total[0].total;
     },
+    toggleFilters() {
+      this.showFilters = !this.showFilters;
+    }
   }
 })
 </script>
@@ -196,13 +209,71 @@ export default defineComponent({
   }
 }
 
-.word-list {
-  padding: 0.5rem;
+
+
+
+.label {
+  font-weight: 500;
+  font-size: 1.25rem;
+  font-family: 'Vollkorn SC';
+}
+
+.main-container {
+  display: flex;
+  flex-direction: row;
+
+  margin: 0 auto;
+  max-width: 69rem;
 }
 
 .word-list-container {
   max-width: 42rem;
   margin: 0 auto;
 }
+.word-list {
+  padding: 0.5rem;
+  padding-left: 0;
 
+  flex-basis: 42rem;
+  flex-shrink: 1;
+}
+
+.filters-region {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  padding-right: 0;
+
+  flex-basis: 24rem;
+  flex-shrink: 6;
+}
+
+@media screen and (max-width: 959px) {
+  .filters-region {
+    z-index: 1000;
+    display: none;
+
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 100vw;
+
+    overflow-y: auto;
+
+    &.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .categories {
+      margin-right: 2rem;
+    }
+  }
+  .word-list {
+    padding-left: 0.5rem;
+  }
+
+}
 </style>
