@@ -189,6 +189,9 @@ export default defineComponent({
   &.gap-before {
     margin-top: 1.5rem;
   }
+  &.top-level.first {
+    margin-top: 1.75rem;
+  }
   &.top-level:not(.notLast) {
     margin-bottom: 1.5rem;
   }
@@ -237,7 +240,7 @@ export default defineComponent({
     content: '';
     position: absolute;
     top: 0;
-    z-index: 100002;
+    z-index: 102;
     pointer-events: none;
     width: 1rem;
     height: 1rem;
@@ -256,7 +259,7 @@ export default defineComponent({
 
   .category-select-marker:after {
     content: '';
-    z-index: 100010;
+    z-index: 110;
 
     position: absolute;
     left: 0;
@@ -274,7 +277,7 @@ export default defineComponent({
   }
   .category-select-marker:before {
     content: '';
-    z-index: 10009;
+    z-index: 109;
 
     position: absolute;
     top: 0;
@@ -297,7 +300,7 @@ export default defineComponent({
 
       &.selection-indicator:after {
         content: '';
-        z-index: 100012;
+        z-index: 112;
 
         position: absolute;
         left: 0;
@@ -315,7 +318,7 @@ export default defineComponent({
       }
       &.selection-indicator:before {
         content: '';
-        z-index: 10011;
+        z-index: 111;
 
         position: absolute;
         top: 0;
@@ -354,7 +357,7 @@ export default defineComponent({
 .category-card-border {
   position: absolute;
   pointer-events: none;
-  z-index: 100000;
+  z-index: 100;
 
   &.x {
     top: 0;
