@@ -104,7 +104,6 @@ export default defineComponent({
   ],
   methods: {
     childrenUpdated($event: any, categoryId: number) {
-      console.log('children updated!')
       if (!this.selectParents) {
         return this.$emit('input', $event);
       }
@@ -124,7 +123,6 @@ export default defineComponent({
       }
     },
     selectCategory(categoryId: number) {
-      console.log('selecting category:', categoryId);
       const value = this.value;
       const valueIndex = value?.indexOf(categoryId);
 
@@ -133,7 +131,6 @@ export default defineComponent({
         value.push(categoryId);
 
         if (this.selectParents && this.depth > 0) {
-
           return this.$emit('input', {value, added: true});
         }
         this.$emit('input', value);
@@ -141,7 +138,6 @@ export default defineComponent({
         // remove things
         if (this.selectParents) {
           const category = this.categories.find((x: any)=> x.id === categoryId);
-          console.log('current category:', category, 'id:', categoryId);
           this.removeChildrenFromValue(category, value);
           return this.$emit('input', value);
         } else {
@@ -159,7 +155,7 @@ export default defineComponent({
 
       if (category.children) {
         for (const child of category.children) {
-          console.log('removing child:', JSON.parse(JSON.stringify(child)), 'with id:', child.id, 'from value array:', JSON.parse(JSON.stringify(value)));
+          // console.log('removing child:', JSON.parse(JSON.stringify(child)), 'with id:', child.id, 'from value array:', JSON.parse(JSON.stringify(value)));
           this.removeChildrenFromValue(child, value);
         }
       }
