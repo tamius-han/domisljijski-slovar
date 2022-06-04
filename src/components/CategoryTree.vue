@@ -185,6 +185,7 @@ export default defineComponent({
   padding-left: 1rem;
 
   position: relative;
+  user-select: none;
 
   &.gap-before {
     margin-top: 1.5rem;
