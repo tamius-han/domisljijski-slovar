@@ -30,25 +30,16 @@
             'active': showFilters,
           }"
         >
-          <div class="w-100 text-center">
+          <div class="w-100 text-center hide-desktop">
             <a @click="toggleFilters()">Nazaj</a>
           </div>
           <div class="label">Jezik iskanja</div>
           <div class="switch">
-            <div
-              class="switch-option"
-              :class="{'active': searchFilter.language === 'en'}"
-              @click="toggleLanguage('en')"
-            >
-              Angleščina
-            </div>
-            <div
-              class="switch-option"
-              :class="{'active': searchFilter.language === 'sl'}"
-              @click="toggleLanguage('sl')"
-            >
-              Slovenščina
-            </div>
+            <HorizontalSelector
+              :options="languageOptions"
+              :value="selectedLanguage"
+              @input="updateSelectedLanguage($event)"
+            ></HorizontalSelector>
           </div>
           <div class="label">
             Kategorije
@@ -58,19 +49,21 @@
               :categories="categories"
               :value="searchFilter.categoryIds"
               :depth="0"
+              @input="updateCategories($event)"
               languagePriority="sl"
             />
           </div>
           <div class="label">
             Zadetkov na stran:
-            <select v-model="searchFilter.limit">
-              <option :value="16">16</option>
-              <option :value="32">32</option>
-              <option :value="64">64</option>
-              <option :value="128">128</option>
-            </select>
           </div>
-          <div class="w-100 text-center">
+          <div class="switch">
+              <HorizontalSelector
+                :options="paginationOptions"
+                :value="searchFilter.limit"
+                @input="updatePageSize($event)"
+              ></HorizontalSelector>
+          </div>
+          <div class="w-100 text-center hide-desktop">
             <a @click="toggleFilters()">Nazaj</a>
           </div>
         </div>
@@ -121,6 +114,7 @@
 
 <script lang="ts">
 import CategoryTree from '../components/CategoryTree.vue'
+import HorizontalSelector from '../components/HorizontalSelector.vue'
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
 import WordCard from '../components/WordCard.vue';
@@ -135,7 +129,8 @@ export default defineComponent({
   components: {
     WordCard,
     Paginator,
-    CategoryTree
+    CategoryTree,
+    HorizontalSelector,
   },
   data() {
     return {
@@ -144,6 +139,20 @@ export default defineComponent({
       totalHits: 0,
       languagePriority: 'sl',
       categories: [] as any[],
+      languageOptions: [
+        {value: 'en', label: 'Angleščina', disabled: false},
+        {value: 'sl', label: 'Slovenščina', disabled: false},
+        {value: undefined, label: 'Ni važno', disabled: false}
+      ],
+      selectedLanguage: undefined as 'en' | 'sl' | undefined,
+      oldSelectedLanguage: undefined,
+
+      paginationOptions: [
+        {value: 16, label: '16'},
+        {value: 32, label: '32'},
+        {value: 64, label: '64'},
+        {value: 128, label: '128'},
+      ],
 
       showFilters: false,
 
@@ -152,9 +161,9 @@ export default defineComponent({
         categoryIds: [],
         meaningId: undefined,
         id: undefined,
-        sourceLanguage: undefined,
+        sourceLanguage: undefined as 'en' | 'sl' | undefined,
         page: 0,
-        limit: 24
+        limit: 16
       }
     }
   },
@@ -178,6 +187,7 @@ export default defineComponent({
     },
     search(search: string) {
       search = search.toLowerCase().trim();
+
       this.searchFilter.search = search;
       this.searchFilter.page = 0;
       this.getResults();
@@ -187,6 +197,26 @@ export default defineComponent({
       this.getResults();
     },
     async getResults() {
+      // if search box is empty, we do not allow the "I don't care"
+      // option in the language select thingy. Instead, we default
+      // to showing en->sl translations.
+      if (this.searchFilter.search.length === 0) {
+        if (!this.selectedLanguage) {
+          this.oldSelectedLanguage = this.selectedLanguage;
+          this.selectedLanguage = 'en';
+          this.searchFilter.sourceLanguage = 'en';
+          this.languageOptions[2].disabled = true;
+        }
+      } else {
+        // if "i don't care" was unset without user action, it also
+        // gets set back to active option without user action
+        if (this.selectedLanguage !== this.oldSelectedLanguage) {
+          this.selectedLanguage = this.oldSelectedLanguage;
+          this.searchFilter.sourceLanguage = this.selectedLanguage;
+        }
+        this.languageOptions[2].disabled = false;
+      }
+
       const words = await this.getTranslations(this.searchFilter);
       console.log("hits:", words);
       this.hits = words.words;
@@ -194,6 +224,23 @@ export default defineComponent({
     },
     toggleFilters() {
       this.showFilters = !this.showFilters;
+    },
+    updateSelectedLanguage($event: any) {
+      this.searchFilter.sourceLanguage = $event;
+      this.selectedLanguage = $event;
+      this.oldSelectedLanguage = $event;
+      this.searchFilter.page = 0;
+      this.getResults();
+    },
+    updateCategories($event: any) {
+      this.searchFilter.categoryIds = $event;
+      this.searchFilter.page = 0;
+      this.getResults();
+    },
+    updatePageSize($event: number) {
+      this.searchFilter.limit = $event;
+      this.searchFilter.page = 0;
+      this.getResults();
     }
   }
 })
@@ -274,6 +321,10 @@ export default defineComponent({
   .word-list {
     padding-left: 0.5rem;
   }
-
+}
+@media screen and (min-width: 960px) {
+  .hide-desktop {
+    display: none;
+  }
 }
 </style>
