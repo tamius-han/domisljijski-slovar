@@ -106,7 +106,7 @@ export default defineComponent({
     childrenUpdated($event: any, categoryId: number) {
       console.log('children updated!')
       if (!this.selectParents) {
-        return this.$emit($event);
+        return this.$emit('input', $event);
       }
 
       if ($event.added) {
