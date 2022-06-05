@@ -9,16 +9,21 @@
       </div>
       <div class="word-list-container">
         <div class="searchbox text-center">
-          <div class="w100">Išči</div>
-          <div class="w100">
-            <input
+          <div class="w100 hand-drawn-row">
+            <SearchBox
+              placeholder="Išči ..."
+              :value="searchFilter.search"
               v-debounce:1s="search"
               @input="search($event as any as string)"
-              :value="searchFilter.search"
-              style="width: 24rem; max-width: 100%"
-            />
+            ></SearchBox>
+            <Button class="primary">Išči</Button>
           </div>
+        </div>
+        <div class="sub-searchbox-row mobile">
           <a @click="showAll()">Pokaži vse</a> | <a @click="toggleFilters()">Omeji iskanje</a>
+        </div>
+        <div class="sub-searchbox-row desktop">
+          <a @click="showAll()">Pokaži vse</a>
         </div>
         <!-- <div class="">[todo] search box</div> -->
         <!-- <a @click="getResults()">TEST ME</a> -->
@@ -68,10 +73,10 @@
           </div>
         </div>
         <div class="word-list-container">
-          <h3 class="text-center">Zadetki iskanja</h3>
+          <div class="text-center label pb-05">Zadetki iskanja</div>
 
           <!-- seznam besed tle -->
-          <div v-if="hits.length > 0" class="">
+          <div v-if="hits.length > 0" class="w-100">
 
             <Paginator
               v-if="totalHits > hits.length"
@@ -82,9 +87,10 @@
               @changePage="changePage($event)"
             >
             </Paginator>
-            <div class="word-list">
+            <div class="word-list w-100">
               <WordCard
                 v-for="word in hits"
+                class="word-card-margin w-100"
                 :key="word.id"
                 :word="word"
                 :languagePriority="languagePriority"
@@ -102,7 +108,7 @@
             </Paginator>
 
           </div>
-          <div v-else class="text-center">
+          <div v-else class="text-center no-hits">
             Ni zadetkov.
           </div>
         </div>
@@ -115,6 +121,8 @@
 <script lang="ts">
 import CategoryTree from '../components/CategoryTree.vue'
 import HorizontalSelector from '../components/HorizontalSelector.vue'
+import SearchBox from '../components/SearchBox.vue'
+import Button from '../components/Button.vue'
 import requestMixin from '@/mixins/request-mixin';
 import { defineComponent } from 'vue';
 import WordCard from '../components/WordCard.vue';
@@ -131,6 +139,8 @@ export default defineComponent({
     Paginator,
     CategoryTree,
     HorizontalSelector,
+    SearchBox,
+    Button,
   },
   data() {
     return {
@@ -171,6 +181,7 @@ export default defineComponent({
     this.canEdit = !!this.getAuthToken();
     this.categories = await this.getCategories();
     console.log('got categories!', JSON.parse(JSON.stringify(this.categories)));
+    this.getResults();
   },
   methods: {
     showAll() {
@@ -190,6 +201,7 @@ export default defineComponent({
 
       this.searchFilter.search = search;
       this.searchFilter.page = 0;
+
       this.getResults();
     },
     changePage(pageNumber: number) {
@@ -249,15 +261,22 @@ export default defineComponent({
 <style lang="scss">
 .title {
   font-family: 'Vollkorn';
-  font-size: 1.5rem;
+  font-size: 3rem;
+
+  margin-top: 0rem;
+  font-weight: normal;
 
   small {
-    font-size: 0.75rem;
+    font-size: 1rem;
   }
 }
 
-
-
+.sub-searchbox-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
 
 .label {
   font-weight: 500;
@@ -274,15 +293,21 @@ export default defineComponent({
 }
 
 .word-list-container {
+  width: 100%;
   max-width: 42rem;
+  padding-top: 1rem;
   margin: 0 auto;
 }
 .word-list {
-  padding: 0.5rem;
+  padding-right: 0.5rem;
   padding-left: 0;
 
   flex-basis: 42rem;
   flex-shrink: 1;
+
+  .word-card-margin:first-child {
+    margin-top: 1rem !important;
+  }
 }
 
 .filters-region {
@@ -294,6 +319,7 @@ export default defineComponent({
   flex-basis: 24rem;
   flex-shrink: 6;
 }
+
 
 @media screen and (max-width: 959px) {
   .filters-region {
@@ -321,9 +347,15 @@ export default defineComponent({
   .word-list {
     padding-left: 0.5rem;
   }
+  .desktop {
+    display: none;
+  }
 }
 @media screen and (min-width: 960px) {
   .hide-desktop {
+    display: none;
+  }
+  .mobile {
     display: none;
   }
 }
