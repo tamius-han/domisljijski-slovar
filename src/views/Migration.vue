@@ -120,7 +120,7 @@ Alternativno lahko pripopaš sem notri export (json string)<br/>
     <div class="fr">
       <div class="fc">
         (comma separated)
-        <input :value="word.categories.join(',')" @input="updateCategories($event, index)"/>
+        <input :value="word.categories" @input="updateCategories($event, index)"/>
       </div>
     </div>
 
@@ -180,19 +180,20 @@ export default defineComponent({
 
       // we hope that similar word types happen to be local to each other
       for (let i = index + 1; i < this.processedData.length; i++) {
-        this.processedData[i].slWord.type = this.processedData[index].enWord.type;
-        this.processedData[i].enWord.type = this.processedData[index].enWord.type;
+        this.processedData[i].enWord.type = JSON.parse(JSON.stringify([...this.processedData[index].enWord.type]));
+        this.processedData[i].slWord.type = this.processedData[i].enWord.type;
       }
     },
     updateCategories(value, index) {
       console.log('updating categories. value:', value, 'index:', index);
-      if (!Array.isArray(value)) {
+      if (value != undefined && !Array.isArray(value)) {
+        console.warn('we are trying to split this:', value);
         value = value.split(',').map(x => +x);
       }
       // we also bank that similar categories are local to each other
       this.processedData[index].categories = value;
       for (let i = index + 1; i < this.processedData.length; i++) {
-        this.processedData[i].categories = this.processedData[index].categories;
+        this.processedData[i].categories = [...this.processedData[index].categories];
       }
     },
     updateCredits(index) {
@@ -203,6 +204,11 @@ export default defineComponent({
     },
     getTermsFromJson() {
       this.processedData = JSON.parse(this.processedDataJson)
+      for (const entry of this.processedData) {
+        if (entry.categories && !Array.isArray(entry.categories)) {
+          entry.categories = entry.categories.split(',');
+        }
+      }
     },
     mergeTermsFromJson() {
       const processedJson = JSON.parse(this.processedDataJson);
