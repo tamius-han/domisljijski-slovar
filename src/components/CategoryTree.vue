@@ -114,7 +114,9 @@ export default defineComponent({
           $event.value.push(categoryId);
         }
       } else {
-        $event.value = $event.value.filter((x: any) => x !== categoryId);
+        // if child is removed, we don't remove parent — parent selection should in
+        // no circumstances be removed without user action
+        // (this function is only ever used when 'selectParents' option is selected)
       }
       if (this.depth) {
         this.$emit('input', $event);
@@ -123,7 +125,14 @@ export default defineComponent({
       }
     },
     selectCategory(categoryId: number) {
-      const value = this.value;
+      let value = this.value ?? [];
+
+      // because migration is fucked
+      if (!Array.isArray(value)) {
+        value = value.split(',');
+        value = value.filter((x: any) => x !== '');
+      }
+
       const valueIndex = value?.indexOf(categoryId);
 
       if (valueIndex === -1) {
@@ -139,7 +148,7 @@ export default defineComponent({
         if (this.selectParents) {
           const category = this.categories.find((x: any)=> x.id === categoryId);
           this.removeChildrenFromValue(category, value);
-          return this.$emit('input', value);
+          return this.$emit('input', {value});
         } else {
           this.value.splice(valueIndex, 1);
         }
