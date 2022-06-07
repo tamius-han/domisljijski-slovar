@@ -5,12 +5,12 @@
 <a @click="getTerms()">Uvozi besede</a><br/><br/>
 
 Alternativno lahko pripopaš sem notri export (json string)<br/>
-<textarea v-model="processedDataJson"></textarea><br/>
+<textarea v-model="processedDataJson" @focus="processedDataJson = JSON.stringify(processedData, null, 2)"></textarea><br/>
 <a @click="getTermsFromJson()">Uvozi besede, ampak iz te besediloškatle</a> ** <a @click="mergeTermsFromJson()">združi prikazano z Json Bourne</a>  ** <a @click="processedDataJson = JSON.stringify(processedData, null, 2)">dej mi te besede nazaj v iščiškatlo</a>
 <br/><br/>
 <a @click="processedData.sort((a,b)=>a.enWord.word?.localeCompare(b.enWord.word))">sort alphabetically <b>BUT ONLY AFTER YOU'VE FINISHED DOING CREDITS, TYPES, AND CATEGORIES</b></a>
 
-<div v-for="(word, index) in processedData" :key="index" class="fr">
+<div v-for="(word, index) in processedData" :key="index" class="fr" :class="{'disabled': word.skip}">
   <!-- ENGLISH -->
   <div class="fc" style="border: 1px solid #000; background-color: rgba(255,128,64, 0.25); margin: 0.25rem;">
     <div class="fr fw"><b>{{index}}</b> :: EN WORD — <small> id override: <input class="override" v-model="word.enWord.id" /></small></div>
@@ -491,5 +491,9 @@ export default defineComponent({
   .category-select {
     display: block !important;
   }
+}
+
+.disabled {
+  filter: grayscale(100%) brightness(1.5);
 }
 </style>
