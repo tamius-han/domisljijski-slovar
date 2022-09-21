@@ -397,11 +397,14 @@ export default defineComponent({
           let enmId, slmId;
           let newMeaningEn = false;
           let newMeaningSl = false;
+          let slMeaningExists = false;
+          let enMeaningExists = false;
 
 
           if (entry.enMeaning.id) {
             enmId = entry.enMeaning.id;
             console.log('english meaning exists:', entry.enMeaning);
+            enMeaningExists = true;
           } else {
             newMeaningEn = true;
             const newEnMeaning = await this.post('/meanings/', entry.enMeaning);
@@ -419,19 +422,22 @@ export default defineComponent({
             // forward-update IDs
             for (let j = i + 1; j < this.processedData.length; j++) {
               if (
-                this.processedData[j].slWord.word === entry.slWord.word
+                (this.processedData[j].slWord.word === entry.slWord.word || this.processedData[j].enWord.word === entry.enWord.word)
                 && this.processedData[j].enMeaning.meaning === entry.enMeaning.meaning
               ) {
-                this.processedData[j].enMeaning.id = slId;
+                this.processedData[j].enMeaning.id = enmId;
               }
             }
           }
 
           if (entry.slMeaning.id) {
             slmId = entry.slMeaning.id;
+            console.log('slovenian meaning exists:', entry.slMeaning);
+            slMeaningExists = true;
           } else {
             newMeaningSl = true;
             const newMeaning = await this.post('/meanings/', entry.slMeaning);
+            console.log('new meaning created:', JSON.parse(JSON.stringify(newMeaning)));
             slmId = newMeaning.data.id;
 
             if (!newMeaning.data.id) {
@@ -445,26 +451,26 @@ export default defineComponent({
             // forward-update IDs
             for (let j = i + 1; j < this.processedData.length; j++) {
               if (
-                this.processedData[j].enWord.word === entry.enWord.word
+                (this.processedData[j].slWord.word === entry.slWord.word || this.processedData[j].enWord.word === entry.enWord.word)
                 && this.processedData[j].slMeaning.meaning === entry.slMeaning.meaning
               ) {
-                this.processedData[j].slMeaning.id = slId;
+                this.processedData[j].slMeaning.id = slmId;
               }
             }
           }
 
-          let newTranslationNeeded = true;
-          // TODO: bind new word to an existing meaning!
-          if (!newMeaningEn && newEnWord) {
-            console.log('we already have existing meaning for a new word', entry.enWord, '—', entry.enMeaning);
-            newTranslationNeeded = false;
-          }
-          if (!newMeaningSl && newSlWord) {
-            console.log('we already have existing meaning for a new word', entry.enWord, '—', entry.slMeaning);
-            newTranslationNeeded = false;
-          }
+          // let newTranslationNeeded = true;
+          // // TODO: bind new word to an existing meaning!
+          // if (!newMeaningEn && newEnWord) {
+          //   console.log('we already have existing meaning for a new word', entry.enWord, '—', entry.enMeaning);
+          //   newTranslationNeeded = false;
+          // }
+          // if (!newMeaningSl && newSlWord) {
+          //   console.log('we already have existing meaning for a new word', entry.enWord, '—', entry.slMeaning);
+          //   newTranslationNeeded = false;
+          // }
 
-          if (newTranslationNeeded) {
+          if (!enMeaningExists && !slMeaningExists) {
             // TODO: add new translation
             console.log('ADDING NEW TRANSLATION! meanings - en', enmId, '; sl', slmId);
             if (!enmId || !slmId) {
