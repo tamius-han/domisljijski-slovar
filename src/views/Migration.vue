@@ -140,10 +140,11 @@ Alternativno lahko pripopaš sem notri export (json string)<br/>
 
 </div>
 
-<div>JEZUS KRISTUS, JSON BOURNE!</div>
-<pre>
-{{processedData}}
-</pre>
+
+<br/>
+<br/>
+Authorization header: <input v-model="authToken" /><br/>
+<a alt="" @click="migrate">CLICK TO MIGRATE</a>
 
 </template>
 
@@ -161,6 +162,7 @@ export default defineComponent({
       processedDataJson: '',
       categories: [] ,
       selectedCategories: [],
+      authToken: '',
     }
   },
   mixins: [
@@ -283,7 +285,29 @@ export default defineComponent({
     },
     // does the hard work of migrating shit
     async migrate() {
+      this.setAuthToken(this.authToken);
+
+      for (const entry of this.processedData) {
+        try {
+          if (entry.enWord.genderExtras && JSON.parse(entry.enWord.genderExtras)) {
+            console.log('.');
+          }
+        } catch (e) {
+          console.error('en word', entry.enWord, 'failed genderExtras parse test');
+          return;
+        }
+        try {
+          if (entry.slWord.genderExtras && JSON.parse(entry.slWord.genderExtras)) {
+            console.log('.');
+          }
+        } catch (e) {
+          console.error('sl word', entry.slWord, 'failed genderExtras parse test');
+          return;
+        }
+      }
+
       for (let i = 0; i < this.processedData.length; i++) {
+        console.info('--------------------------------------------------');
         const entry = this.processedData[i];
 
         // skip words we don't want to update
@@ -296,18 +320,22 @@ export default defineComponent({
           let enId, slId;
           let newEnWord = false;
           let newSlWord = false;
+
           if (entry.enWord.id) {
+            console.log('en word already exists:', JSON.parse(JSON.stringify(entry.enWord)));
             enId = entry.enWord.id;
           } else {
             newEnWord = true;
-            const englishWordNew = await this.post('/words', entry.enWord);
+            const englishWordNew = await this.post('/words/', entry.enWord);
+            console.log('new en word created:', JSON.parse(JSON.stringify(englishWordNew.data)));
 
-            if (!englishWordNew.data[0].id) {
+            if (!englishWordNew.data.id) {
               console.warn('failed to add entry:', entry, '. skipping ...');
               console.warn('backend returned:', englishWordNew);
+              return;
               continue;
             }
-            enId = englishWordNew.data[0].id;
+            enId = englishWordNew.data.id;
 
             // forward-update IDs
             for (let j = i + 1; j < this.processedData.length; j++) {
@@ -318,17 +346,20 @@ export default defineComponent({
           }
 
           if (entry.slWord.id) {
-            newSlWord = true;
+            console.log('sl word already exists:', JSON.parse(JSON.stringify(entry.slWord)));
             slId = entry.slWord.id;
           } else {
-            const slovenianWordNew = await this.post('/words', entry.slWord);
+            newSlWord = true;
+            const slovenianWordNew = await this.post('/words/', entry.slWord);
+            console.log('new sl word created:', JSON.parse(JSON.stringify(slovenianWordNew.data)));
 
-            if (!slovenianWordNew.data[0].id) {
+            if (!slovenianWordNew.data.id) {
               console.warn('failed to add entry:', entry, '. skipping ...');
               console.warn('backend returned:', slovenianWordNew);
+              return;
               continue;
             }
-            slId = slovenianWordNew.data[0].id;
+            slId = slovenianWordNew.data.id;
 
             // forward-update IDs
             for (let j = i + 1; j < this.processedData.length; j++) {
@@ -342,8 +373,23 @@ export default defineComponent({
           entry.enMeaning.wordId = enId;
           entry.slMeaning.wordId = slId;
 
-          entry.enMeaning.categoryIds = entry.categories.split(',').map(x => +x);
+          // fix meaning
+          entry.enMeaning.type = Array.isArray(entry.enWord.type) ? +entry.enWord.type[0] ?? 1 : +entry.enWord.type ?? 1;
+          entry.slMeaning.type = Array.isArray(entry.enWord.type) ? +entry.enWord.type[0] ?? 1 : +entry.enWord.type ?? 1;
+
+          if (! Array.isArray(entry.categories)) {
+            entry.enMeaning.categoryIds = entry.categories.split(',').map(x => +x);
+          } else {
+            entry.enMeaning.categoryIds = entry.categories.map(x => +x);
+          }
           entry.slMeaning.categoryIds = entry.enMeaning.categoryIds;
+
+          if (!entry.enMeaning.meaning) {
+            entry.enMeaning.meaning = 'TBD';
+          }
+          if (!entry.slMeaning.meaning) {
+            entry.slMeaning.meaning = 'TBD';
+          }
 
           // TODO: get categories
 
@@ -352,22 +398,30 @@ export default defineComponent({
           let newMeaningEn = false;
           let newMeaningSl = false;
 
+
           if (entry.enMeaning.id) {
             enmId = entry.enMeaning.id;
+            console.log('english meaning exists:', entry.enMeaning);
           } else {
             newMeaningEn = true;
-            const newEnMeaning = await this.post('/meanings', entry.enMeaning);
+            const newEnMeaning = await this.post('/meanings/', entry.enMeaning);
+            console.log('new meaning created:', JSON.parse(JSON.stringify(newEnMeaning)));
+            enmId = newEnMeaning.data.id;
 
-            if (!newEnMeaning.data[0].id) {
+            if (!newEnMeaning.data.id) {
               console.warn('failed to add entry — en meaning failed:', entry, '. skipping ...');
               console.warn('backend returned:', newEnMeaning);
+              return;
               continue;
             }
-            entry.slMeaning.id = newEnMeaning.data[0].id;
+            entry.enMeaning.id = newEnMeaning.data.id;
 
             // forward-update IDs
             for (let j = i + 1; j < this.processedData.length; j++) {
-              if (this.processedData[j].enMeaning.meaning === entry.enMeaning.meaning) {
+              if (
+                this.processedData[j].slWord.word === entry.slWord.word
+                && this.processedData[j].enMeaning.meaning === entry.enMeaning.meaning
+              ) {
                 this.processedData[j].enMeaning.id = slId;
               }
             }
@@ -377,18 +431,23 @@ export default defineComponent({
             slmId = entry.slMeaning.id;
           } else {
             newMeaningSl = true;
-            const newMeaning = await this.post('/meanings', entry.slMeaning);
+            const newMeaning = await this.post('/meanings/', entry.slMeaning);
+            slmId = newMeaning.data.id;
 
-            if (!newMeaning.data[0].id) {
+            if (!newMeaning.data.id) {
               console.warn('failed to add entry — sl meaning failed:', entry, '. skipping ...');
               console.warn('backend returned:', newMeaning);
+              return;
               continue;
             }
-            entry.slMeaning.id = newMeaning.data[0].id;
+            entry.slMeaning.id = newMeaning.data.id;
 
             // forward-update IDs
             for (let j = i + 1; j < this.processedData.length; j++) {
-              if (this.processedData[j].slMeaning.meaning === entry.slMeaning.meaning) {
+              if (
+                this.processedData[j].enWord.word === entry.enWord.word
+                && this.processedData[j].slMeaning.meaning === entry.slMeaning.meaning
+              ) {
                 this.processedData[j].slMeaning.id = slId;
               }
             }
@@ -397,23 +456,32 @@ export default defineComponent({
           let newTranslationNeeded = true;
           // TODO: bind new word to an existing meaning!
           if (!newMeaningEn && newEnWord) {
+            console.log('we already have existing meaning for a new word', entry.enWord, '—', entry.enMeaning);
             newTranslationNeeded = false;
           }
           if (!newMeaningSl && newSlWord) {
+            console.log('we already have existing meaning for a new word', entry.enWord, '—', entry.slMeaning);
             newTranslationNeeded = false;
           }
 
           if (newTranslationNeeded) {
             // TODO: add new translation
-            await this.post('/translations', {
+            console.log('ADDING NEW TRANSLATION! meanings - en', enmId, '; sl', slmId);
+            if (!enmId || !slmId) {
+              console.error('sl meaning ID or en meaning ID is missing!');
+              return;
+            }
+            await this.post('/translations/', {
               meaning_en: enmId,
               meaning_sl: slmId
             });
           } else {
+            console.log('at least one new word appeared!');
             if (newEnWord) {
               // bind en word to en meaning
+              console.log('new english word:', entry);
               try {
-                const r = await this.post('/bindMeaning', {
+                const r = await this.post('/bindMeaning/', {
                   meaning_id: enmId,
                   word_id: enId,
                   wordPriority: entry.enMeaning.wordPriority,
@@ -422,12 +490,14 @@ export default defineComponent({
               } catch (e) {
                 console.warn('failed to bind meaning — en meaning failed:', entry, '. skipping ...');
                 console.warn('backend returned:', e);
+                return;
               }
             }
             if (newSlWord) {
               // bind sl word to sl meaning
               try {
-                await this.post('/bindMeaning', {
+                console.log('new slovenian word:', entry);
+                await this.post('/bindMeaning/', {
                   meaning_id: slmId,
                   word_id: slId,
                   wordPriority: entry.slMeaning.wordPriority,
@@ -436,13 +506,15 @@ export default defineComponent({
               } catch (e) {
                 console.warn('failed to bind meaning — sl meaning failed:', entry, '. skipping ...');
                 console.warn('backend returned:', e);
+                return;
               }
             }
           }
 
         } catch (e) {
-          console.warn('failed to add entry:', entry, '. skipping ...');
+          console.warn('[catch] failed to add entry:', entry, 'Stopping import.');
           console.error(e);
+          return;
         }
 
       }
