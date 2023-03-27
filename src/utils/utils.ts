@@ -382,7 +382,10 @@ function parseGenderExtras(genderExtrasString?: string) {
     if (!genderExtrasString) {
       return undefined;
     }
-    const geo = JSON.parse(genderExtrasString);
+    // this mvp on stackoverflow:
+    // https://stackoverflow.com/a/4210586
+    genderExtrasString = genderExtrasString.replace(/(['"])?([a-zA-Z0-9]+)(['"])?:/g, '"$2":');
+    const geo = typeof genderExtrasString === 'string' ? JSON.parse(genderExtrasString) : genderExtrasString;
     return {
       female: geo.f,
       male: geo.m,
