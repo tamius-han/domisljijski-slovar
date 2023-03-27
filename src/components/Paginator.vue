@@ -1,13 +1,13 @@
 <template>
   <div class="page-number-row">
     <a @click="goToPage(currentPage - 1)" :class="{disabled: currentPage <= 0}">&lt;</a>
-    <a @click="goToPage(0)">1</a>
+    <a :class="{'selected': currentPageNumber == 1}" @click="goToPage(0)">1</a>
     <span v-if="hasFirstGap">...</span>
-    <a v-for="pageNumber of pageNumbers" :key="pageNumber" @click="goToPage(pageNumber - 1)">
+    <a v-for="pageNumber of visiblePageNumbers" :key="pageNumber" :class="{'selected': currentPageNumber == pageNumber}" @click="goToPage(pageNumber - 1)">
       {{pageNumber}}
     </a>
     <span v-if="hasLastGap">...</span>
-    <a @click="goToPage(numberOfPages - 1)">{{numberOfPages}}</a>
+    <a :class="{'selected': currentPageNumber == numberOfPages}" @click="goToPage(numberOfPages - 1)">{{numberOfPages}}</a>
     <a @click="goToPage(currentPage + 1)" :class="{disabled: currentPage >= numberOfPages - 1}">&gt;</a>
   </div>
 </template>
@@ -46,11 +46,13 @@ export default defineComponent({
       }
 
       return pageNumbers;
+    },
+    currentPageNumber(): number {
+      return (this.currentPage ?? 0) + 1;
     }
   },
   methods: {
     goToPage(page: number) {
-      this.$emit('pageChange', page);
       this.$emit('changePage', page);
     }
   }
@@ -77,9 +79,12 @@ export default defineComponent({
     text-decoration: none;
     border: 1px solid rgba(241, 181, 116, 0.5);
   }
+  a:hover, .selected {
+    background-color: rgba(241, 181, 116, 0.5);
+  }
   a:hover {
     text-decoration: underline;
-    background-color: rgba(241, 181, 116, 0.5);
+    cursor: pointer;
   }
 }
 </style>
