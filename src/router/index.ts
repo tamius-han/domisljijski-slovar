@@ -19,6 +19,9 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Domišljijski slovarček',
     component: Slovarcek
+    // redirect: to => {
+    //   return { path: '/brskaj' }
+    // }
   },
   {
     path: '/brskaj',

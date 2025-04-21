@@ -37,7 +37,7 @@
             >
               Dodaj novo besedo
             </div>
-            <div 
+            <div
               v-else
               class="button secondary"
               @click="closeForms()"
@@ -114,13 +114,13 @@
                     </div>
                   </div>
                   <div class="flex-nogrow flex-noshrink flex flex-row">
-                    <div 
+                    <div
                       class="button small secondary"
                       @click="editWord(hit)"
                     >
                       Uredi
                     </div>
-                    <div 
+                    <div
                       v-if="!hit.translations?.length"
                       class="button small"
                       @click="deleteWord(hit)"
@@ -134,13 +134,13 @@
                 <!-- #region word translations -->
                 <div class="translation-list">
                   Prevodi:
-                  <div v-for="(word, index) of hit.translations" 
+                  <div v-for="(word, index) of hit.translations"
                       :key="index"
                       class="translation"
                       :class="{'selected': selectedTranslation?.id === word.id}"
                   >
                     <div class="word">
-                      <span class="word-number">{{index + 1}}. </span> 
+                      <span class="word-number">{{index + 1}}. </span>
                       <span class="word-word">{{word.word}}</span>
                       <span v-if="word.word_m || word.word_f || word.word_plural" class="gender-plural">
                         (<template v-if="word.word_m"><i>m.</i> <span class="secondary">{{word.word_m}}</span><template v-if="word.word_f || word.word_plural">; </template></template>
@@ -157,11 +157,11 @@
                     <div v-if="word.translationNotes" class="translation-notes">
                       Opombe prevoda: {{word.translationNotes}}
                     </div>
-                    
+
                     <div v-if="word.rfc || word.translationRfc">
                       Stvari v idejni fazi: {{word.rfc ? 'beseda' : ''}}{{word.rfc && word.translationRfc ? ', ' : ''}}{{word.translationRfc ? 'prevod' : ''}}.
                     </div>
-                    
+
                     <div class="">
                       <div v-if="word.rfc" class="regular">⚠️ V idejni fazi.</div>
                       <div v-if="word.via" class="via">Vkradeno od: {{word.via}}</div>
@@ -176,7 +176,7 @@
                       >
                         Uredi prevod
                       </div>
-                      <div 
+                      <div
                         class="button small"
                         @click="deleteTranslation(key, word.id)"
                       >
@@ -223,7 +223,7 @@
               </div>
               <div class="button-wrapper">
                 <div class="button" @click="updateTranslation()">Shrani prevod</div>
-                <div 
+                <div
                   class="button secondary"
                   @click="closeForms()"
                 >
@@ -237,7 +237,7 @@
             <div  v-if="visibleForms.addTranslation" class="edit-box half-page">
               <h2>Dodaj prevod</h2>
               <p>
-                Dodajanje prevoda za besedo: <b>{{selectedWord?.word ?? '<izberi>'}}</b> <i>{{ 
+                Dodajanje prevoda za besedo: <b>{{selectedWord?.word ?? '<izberi>'}}</b> <i>{{
                   selectedWord?.description || selectedWord?.notes ?
                     `(${selectedWord?.description}${
                       selectedWord?.description && selectedWord.note ?
@@ -286,7 +286,7 @@
                 >
                   Shrani prevod
                 </div>
-                <div 
+                <div
                   class="button secondary"
                   @click="closeForms()"
                 >
@@ -304,7 +304,7 @@
                 @updated="wordUpdated($event)"
                 @error="wordUpdatedError($event)"
               ></word-editor>
-              <div 
+              <div
                 class="button secondary"
                 @click="closeForms()"
               >
@@ -334,12 +334,12 @@ import { defineComponent } from 'vue';
 
 /**
  * DONE & working:
- * 
+ *
  *  - adding words
  *  - adding translations
  *  - deleting translations
  *  - deleting words
- * 
+ *
  * TODO:
  *  - edit word
  *  - edit translation
@@ -447,7 +447,7 @@ export default defineComponent({
       if (lang === 'en') {
         for (const d of data) {
           const existing = processed.find(x => x.id === +d.en_id);
-         
+
           const translation = {
             id: +d.tr_id,
             translationNotes: d.tr_notes,
@@ -490,7 +490,7 @@ export default defineComponent({
       } else {
         for (const d of data) {
           const existing = processed.find(x => x.id === d.sl_id);
-          
+
           const translation = {
             id: +d.tr_id,
             translationNotes: d.tr_notes,
@@ -626,7 +626,7 @@ export default defineComponent({
       this.openForm('addTranslation');
       this.selectWord(word);
     },
-    
+
     /**
      * Sets the word that we'll use for translation.
      */

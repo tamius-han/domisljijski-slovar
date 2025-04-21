@@ -76,7 +76,6 @@ export default defineComponent({
   ],
   computed: {
     categoryCards(): any {
-      console.log('categories:', this.meaningEn.categories)
       return categoryTree2CategoryCards(this.meaningEn.categories);
     }
   },

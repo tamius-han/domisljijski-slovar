@@ -1,7 +1,7 @@
 <template>
   <div class="h100 flex flex-column">
     <div id="nav" class="flex-nogrow flex-noshrink">
-      <router-link to="/">Išči</router-link> |
+      <!-- <router-link to="/">Išči</router-link> | -->
       <router-link to="/brskaj">Brskaj</router-link> |
       <router-link to="/about">O strani</router-link> |
       <router-link to="/durin">Temni kotiček</router-link>

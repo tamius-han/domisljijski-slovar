@@ -169,18 +169,53 @@ export default defineComponent({
       searchFilter: {
         search: '',
         categoryIds: [],
-        meaningId: undefined,
-        id: undefined,
+        meaningId: undefined as number | undefined,
+        id: undefined as number | undefined,
         sourceLanguage: undefined as 'en' | 'sl' | undefined,
         page: 0,
         limit: 16
       }
     }
   },
+  watch: {
+    'searchFilter.search'(newSearch: string) {
+      if (newSearch.length === 0) {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            isci: newSearch
+          }
+        });
+      } else {
+        this.$router.replace({
+          query: {
+            ...this.$route.query,
+            idd: undefined,
+            meaningId: undefined,
+            isci: newSearch
+          }
+        });
+      }
+    },
+    'searchFilter.id'(newId: string) {
+      this.$router.replace({
+        query: {
+          ...this.$route.query,
+          id: newId
+        }
+      });
+    },
+  },
   async created() {
     this.canEdit = !!this.getAuthToken();
     this.categories = await this.getCategories();
-    console.log('got categories!', JSON.parse(JSON.stringify(this.categories)));
+    // console.log('got categories!', JSON.parse(JSON.stringify(this.categories)));
+  },
+  async mounted() {
+    this.searchFilter.id = this.$route.query.id ? +(this.$route.query.id as string) : undefined;
+    this.searchFilter.meaningId = this.$route.query.meaningId ?  +(this.$route.query.meaningId as string) : undefined;
+    this.searchFilter.search = this.$route.query.isci as string || '';
+
     this.getResults();
   },
   methods: {
@@ -230,7 +265,6 @@ export default defineComponent({
       }
 
       const words = await this.getTranslations(this.searchFilter);
-      console.log("hits:", words);
       this.hits = words.words;
       this.totalHits = +words.total[0].total;
     },

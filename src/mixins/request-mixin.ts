@@ -72,7 +72,7 @@ const requestMixin = {
       }
     },
     async getTranslations(filter: WordFilter) {
-      const res = await this.get(`/translate?${buildQs(worldFilter2qsParams(filter))}`);
+      const res = await this.get(`/translate/?${buildQs(worldFilter2qsParams(filter))}`);
       return {
         words: processTranslateResponse(res.data.words),
         total: res.data.total

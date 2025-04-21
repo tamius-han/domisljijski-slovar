@@ -67,7 +67,7 @@ export default defineComponent({
   ],
   methods: {
     copyWordLinkToClipboard() {
-      const link = `${window.location.protocol}://${window.location.host}/beseda/?id=${this.word.id}`;
+      const link = `${window.location.protocol}//${window.location.host}/brskaj?id=${this.word.id}`;
       navigator.clipboard.writeText(link);
       this.wordLinkCopied = true;
       clearTimeout(this.wordLinkCopiedTimeout);
